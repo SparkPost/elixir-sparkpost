@@ -10,6 +10,20 @@ The official Go package for using the [SparkPost API](https://www.sparkpost.com/
 
 ## Installation
 
+If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+
+  1. Add sparkpost to your list of dependencies in `mix.exs`:
+
+        def deps do
+          [{:sparkpost, "~> 0.0.1"}]
+        end
+
+  2. Ensure sparkpost is started before your application:
+
+        def application do
+          [applications: [:sparkpost]]
+        end
+
 ## Documentation
 
 ### Contribute

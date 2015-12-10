@@ -1,0 +1,2 @@
+defmodule Sparkpost do
+end
