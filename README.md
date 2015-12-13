@@ -24,7 +24,52 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
           [applications: [:sparkpost]]
         end
 
-## Documentation
+## Usage
+
+```elixir
+# In your config/config.exs file
+config :myapp, sparkpost_api_key: "YOUR-API-KEY"
+
+# lib/example.ex
+defmodule MyApp.Example do
+  use SparkPost.Transmissions
+
+  def send_inline do
+    send to: ["recipient1@example.com"],
+         from: "elixir@sparkpostbox.com",
+         subject: "Sending email from Elixir is awesome!",
+         text: "Hi there!",
+         html: "<p>Hi there!</p>"
+  end
+
+  def send_using_template do
+    send to: ["recipient1@example.com"],
+         template: "my-template"
+  end
+
+  def send_using_recipient_list do
+    send recipient_list: "my-list",
+         template: "my-template"
+  end
+
+  def send_with_attachments do
+    send to: ["recipient1@example.com"],
+         from: "elixir@sparkpostbox.com",
+         subject: "Sending email from Elixir is awesome!",
+         text: "Hi there!",
+         html: "<p>Hi there!</p>",
+         attachments: [%{type: "application/pdf",
+                         name: "statement.pdf",
+                         data: pdf_data}]
+  end
+end
+```
+
+```bash
+$ iex -S mix
+iex> MyApp.Example.send_message
+{:ok, ...}
+```
 
 ### Contribute
 
