@@ -56,9 +56,9 @@ end
 
 ```elixir
 defmodule MyApp.Example do
-  use SparkPost.Transmission
-  use SparkPost.Recipient
-  use SparkPost.Template
+  alias SparkPost.Transmission
+  alias SparkPost.Recipient
+  alias SparkPost.Template
 
   def send_message do
     Transmission.create(%Transmission.Request{
