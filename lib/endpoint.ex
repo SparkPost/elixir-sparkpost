@@ -4,6 +4,8 @@ defmodule Sparkpost.Endpoint do
   This module underpins the Sparkpost.* modules.
   """
 
+  @default_endpoint "https://api.sparkpost.com/api/v1/"
+
   defmodule Response do
     defstruct status_code: nil, results: nil
   end
@@ -32,10 +34,10 @@ defmodule Sparkpost.Endpoint do
   """
   def request(method, endpoint, options) do
     url = if Keyword.has_key?(options, :params) do
-      Application.get_env(:sparkpost, :api_endpoint) <> endpoint
+      Application.get_env(:sparkpost, :api_endpoint, @default_endpoint) <> endpoint
         <> "?" <> URI.encode_query(options[:params])
     else
-      Application.get_env(:sparkpost, :api_endpoint) <> endpoint
+      Application.get_env(:sparkpost, :api_endpoint, @default_endpoint) <> endpoint
     end
 
     reqopts = if method in [:get, :delete] do
@@ -77,8 +79,9 @@ defmodule Sparkpost.Endpoint do
   end
 
   defp base_request_headers() do
+    {:ok, version} = :application.get_key(:sparkpost, :vsn)
     [
-      "User-Agent": "elixir-sparkpost/" <> Sparkpost.Mixfile.project()[:version],
+      "User-Agent": "elixir-sparkpost/" <> to_string(version),
       "Authorization": Application.get_env(:sparkpost, :api_key)
     ]
   end

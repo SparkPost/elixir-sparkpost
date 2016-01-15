@@ -33,10 +33,10 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 In your config/config.exs file:
 
 ```elixir
-config :myapp, sparkpost_api_key: "YOUR-API-KEY"
+config :sparkpost, api_key: "YOUR-API-KEY"
 ```
 
-### Option: Use Convenience Functions
+### Option 1: Use Convenience Functions
 
 ```elixir
 defmodule MyApp.Example do
@@ -52,7 +52,7 @@ defmodule MyApp.Example do
 end
 ```
 
-### Option: Use Advanced Functions
+### Option 2: Use Advanced Functions
 
 ```elixir
 defmodule MyApp.Example do
@@ -61,15 +61,15 @@ defmodule MyApp.Example do
   alias SparkPost.Template
 
   def send_message do
-    Transmission.create(%Transmission.Request{
+    Transmission.create(%Transmission{
         options: %Transmission.Options{},
         recipients: [ %Recipient{ address: %Sparkpost.Address{ email: "your@example.com" }} ],
         return_path: "elixir@sparkpostbox.com",
         content: %Template.Inline{
           subject: "Sending email from Elixir is awesome!",
           from: %Sparkpost.Address{ email: "elixir@sparkpostbox.com" },
-          text: text,
-          html: html
+          text: "Hi there!",
+          html: "<p>Hi there!</p>"
         }
     })
   end
