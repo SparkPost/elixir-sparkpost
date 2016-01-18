@@ -94,7 +94,6 @@ defmodule Sparkpost.Endpoint do
   defp decode_response_body(body) do
     # TODO: [key: :atoms] is unsafe for open-ended structures such as
     # metadata and substitution_data
-    IO.puts body
     {:ok, resp} = body |> Poison.decode([keys: :atoms])
     resp
   end

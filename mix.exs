@@ -7,7 +7,10 @@ defmodule Sparkpost.Mixfile do
      elixir: "~> 1.1",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps]
+     deps: deps,
+     test_coverage: [tool: ExCoveralls],
+     preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test]
+   ]
   end
 
   # Configuration for the OTP application
@@ -30,7 +33,9 @@ defmodule Sparkpost.Mixfile do
     [
       {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
       {:httpotion, "~> 2.1.0"},
-      {:poison, "~> 1.5"}
+      {:poison, "~> 1.5"},
+      {:mock, "~> 0.1.1", only: :test},
+      {:excoveralls, "~> 0.4", only: :test}
     ]
   end
 end

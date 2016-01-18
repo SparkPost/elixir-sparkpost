@@ -18,7 +18,17 @@ defmodule Sparkpost.Recipient do
     [ to_recipient(email) ]
   end
 
+  def to_recipient_list(%{list_id: list_id}) do
+    %Sparkpost.Recipient.ListRef{list_id: list_id}
+  end
+
   def to_recipient(email) when is_binary(email) do
     %__MODULE__{ address: %Sparkpost.Address{ email: email }}
+  end
+
+  def to_recipient(struc) when is_map(struc) do
+    struct(Sparkpost.Recipient, %{
+      struc | address: Sparkpost.Address.to_address(struc.address),
+    })
   end
 end

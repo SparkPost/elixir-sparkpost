@@ -1,0 +1,31 @@
+{
+  "results": [
+    {
+      "content": {
+        "template_id": "winter_sale"
+      },
+      "id": "11713562166689858",
+      "campaign_id": "thanksgiving",
+      "description": "",
+      "state": "submitted"
+    },
+    {
+      "content": {
+        "template_id": "inline"
+      },
+      "id": "11713562166689979",
+      "campaign_id": "thanksgiving",
+      "description": "",
+      "state": "submitted"
+    },
+    {
+      "content": {
+        "template_id": "thanksgiving_template"
+      },
+      "id": "11713048079237202",
+      "campaign_id": "thanksgiving",
+      "description": "",
+      "state": "submitted"
+    }
+  ]
+}

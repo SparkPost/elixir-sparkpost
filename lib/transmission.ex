@@ -46,7 +46,7 @@ defmodule Sparkpost.Transmission do
   ## Parameters
   - %Sparkpost.Transmission.Request{} consisting of:
     - recipients: [%Sparkpost.Recipient{}] or %SparkPost.Recipient.ListRef{}
-    - content: %Sparkpost.Template.Inline{}, %Sparkpost.Template.Raw{} or %Sparkpost.Template.Ref{}
+    - content: %Sparkpost.Content.Inline{}, %Sparkpost.Content.Raw{} or %Sparkpost.Content.TemplateRef{}
     - options: %Sparkpost.Transmission.Options{}
     - campaign_id: campaign identifier (string)
     - return_path: envelope FROM address (email address string)
@@ -60,7 +60,7 @@ defmodule Sparkpost.Transmission do
         options: %Sparkpost.Transmission.Options{},
         recipients: [ %Sparkpost.Recipient{ address: %Sparkpost.Address{ email: "to@you.com" }} ],
         return_path: "from@me.com",
-        content: %Sparkpost.Template.Inline{
+        content: %Sparkpost.Content.Inline{
           subject: subject,
           from: %Sparkpost.Address{ email: "from@me.com" },
           text: text,
@@ -75,7 +75,7 @@ defmodule Sparkpost.Transmission do
           options: %Sparkpost.Transmission.Options{},
           recipients: Sparkpost.Recipient.to_recipient_list["to@you.com", "to@youtoo.com"],
           return_path: "from@me.com",
-          content: %Sparkpost.Template.Ref{ template_id: "test-template-1" }
+          content: %Sparkpost.Content.TemplateRef{ template_id: "test-template-1" }
         }
       )
       #=> Sparkpost.Transmission.Response{id: "102258889940193105", total_accepted_recipients: 2, total_rejected_recipients: 0}
@@ -111,7 +111,7 @@ defmodule Sparkpost.Transmission do
   end
 
   @doc """
-  List all multi-recipient transmissions, possibly filtered by campaign_id and/or template.
+  List all multi-recipient transmissions, possibly filtered by campaign_id and/or content.
 
   ## Parameters
   - query filters to narrow the list (keyword)
@@ -139,7 +139,7 @@ defmodule Sparkpost.Transmission do
     case response do
       %Sparkpost.Endpoint.Response{} ->
         Enum.map(response.results, fn (trans) -> struct(__MODULE__, trans) end)
-      true -> response
+      _ -> response
     end
   end
 end

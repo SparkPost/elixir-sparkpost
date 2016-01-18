@@ -1,0 +1,30 @@
+{
+  "results": {
+    "transmission": {
+      "id": "11750520427380741",
+      "description": "",
+      "state": "Success",
+      "campaign_id": "white_christmas",
+      "content": {
+        "template_id": "Bob's template",
+        "use_draft_template": false
+      },
+      "return_path": "fred@flintstone.com",
+      "rcpt_list_chunk_size": 100,
+      "rcpt_list_total_chunks": 1,
+      "num_rcpts": 10,
+      "num_generated": 10,
+      "num_failed_gen": 0,
+      "generation_start_time": "2014-05-22T15:12:59+00:00",
+      "generation_end_time": "2014-05-22T15:13:00+00:00",
+      "substitution_data": "",
+      "metadata": {
+        "key1": "value1"
+      },
+      "options": {
+        "open_tracking": "",
+        "click_tracking": ""
+      }
+    }
+  }
+}
