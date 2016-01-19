@@ -1,5 +1,5 @@
-to = "ewan.dennis@sparkpost.com"
-from = "ewan@cloudygoo.com"
+to = "you@there.com"
+from = "me@here.com"
 SparkPost.send(
   to: to,
   from: from,

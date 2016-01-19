@@ -1,18 +1,18 @@
-from = "ewan@cloudygoo.com"
-to = "ewan.dennis@sparkpost.com"
+from = "me@here.com"
+to = "you@there.com"
 filename = "test/data/sparky.png"
 
-Sparkpost.Transmission.create(
-  %Sparkpost.Transmission{
-    options: %Sparkpost.Transmission.Options{},
-    recipients: Sparkpost.Recipient.to_recipient_list([to]),
+SparkPost.Transmission.create(
+  %SparkPost.Transmission{
+    options: %SparkPost.Transmission.Options{},
+    recipients: SparkPost.Recipient.to_recipient_list([to]),
     return_path: from,
-    content: %Sparkpost.Content.Inline{
+    content: %SparkPost.Content.Inline{
       from: from,
       subject: "Now with attachments!",
       text: "There is an attachment with this message",
       attachments: [
-        Sparkpost.Content.to_attachment(
+        SparkPost.Content.to_attachment(
           Path.basename(filename), "image/jpeg", File.read!(filename)
         )
       ]

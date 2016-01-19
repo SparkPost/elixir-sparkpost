@@ -60,7 +60,6 @@ defmodule MyApp.Example do
 
   def send_message do
     Transmission.create(%Transmission{
-        options: %Transmission.Options{},
         recipients: [ %Recipient{ address: %Sparkpost.Address{ email: "your@example.com" }} ],
         return_path: "elixir@sparkpostbox.com",
         content: %Template.Inline{
