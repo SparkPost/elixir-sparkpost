@@ -1,7 +1,7 @@
-defmodule Sparkpost.Endpoint do
+defmodule SparkPost.Endpoint do
   @moduledoc """
   Base client for the SparkPost API, able to make requests and interpret responses.
-  This module underpins the Sparkpost.* modules.
+  This module underpins the SparkPost.* modules.
   """
 
   @default_endpoint "https://api.sparkpost.com/api/v1/"
@@ -26,8 +26,8 @@ defmodule Sparkpost.Endpoint do
 
   ## Example
     List transmissions for the "ElixirRox" campaign:
-        Sparkpost.Endpoint.request(:get, "transmissions", [campaign_id: "ElixirRox"])
-        #=> %Sparkpost.Endpoint.Response{results: [%{"campaign_id" => "",
+        SparkPost.Endpoint.request(:get, "transmissions", [campaign_id: "ElixirRox"])
+        #=> %SparkPost.Endpoint.Response{results: [%{"campaign_id" => "",
           "content" => %{"template_id" => "inline"}, "description" => "",
           "id" => "102258558346809186", "name" => "102258558346809186",
           "state" => "Success"}, ...], status_code: 200}
@@ -54,9 +54,9 @@ defmodule Sparkpost.Endpoint do
     body = decode_response_body(json)
 
     if Map.has_key?(body, :errors) do
-      %Sparkpost.Endpoint.Error{ status_code: status_code, errors: body.errors }
+      %SparkPost.Endpoint.Error{ status_code: status_code, errors: body.errors }
     else
-      %Sparkpost.Endpoint.Response{ status_code: status_code, results: body.results }
+      %SparkPost.Endpoint.Response{ status_code: status_code, results: body.results }
     end
   end
 
@@ -66,7 +66,7 @@ defmodule Sparkpost.Endpoint do
   Extract a meaningful structure from a generic endpoint response:
   response.results[subkey] as struct_type
   """
-  def marshal_response(%Sparkpost.Endpoint.Response{} = response, struct_type, subkey) do
+  def marshal_response(%SparkPost.Endpoint.Response{} = response, struct_type, subkey) do
     if subkey do
       struct(struct_type, response.results[subkey])
     else
@@ -74,7 +74,7 @@ defmodule Sparkpost.Endpoint do
     end
   end
 
-  def marshal_response(%Sparkpost.Endpoint.Error{} = response, _struct_type, _subkey) do
+  def marshal_response(%SparkPost.Endpoint.Error{} = response, _struct_type, _subkey) do
     response
   end
 
@@ -87,7 +87,8 @@ defmodule Sparkpost.Endpoint do
   end
 
   defp encode_request_body(body) do
-    {:ok, req} = body |> Poison.encode
+    {:ok, req} = body |> Washup.filter |> Poison.encode
+    # IO.puts req
     req
   end
 

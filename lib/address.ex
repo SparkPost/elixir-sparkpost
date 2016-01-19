@@ -1,4 +1,4 @@
-defmodule Sparkpost.Address do
+defmodule SparkPost.Address do
   defstruct name: nil, email: :required
 
   def to_address(email) when is_binary(email) do

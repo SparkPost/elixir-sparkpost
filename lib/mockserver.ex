@@ -1,4 +1,4 @@
-defmodule Sparkpost.MockServer do
+defmodule SparkPost.MockServer do
   def create_json(endpoint\\"transmission") do
     File.read!("test/data/create#{endpoint}.json")
   end
@@ -16,19 +16,19 @@ defmodule Sparkpost.MockServer do
   end
 
   def mk_resp do
-    Sparkpost.MockServer.mk_http_resp(200, create_json)
+    SparkPost.MockServer.mk_http_resp(200, create_json)
   end
 
   def mk_fail do
-    Sparkpost.MockServer.mk_http_resp(400, create_fail_json)
+    SparkPost.MockServer.mk_http_resp(400, create_fail_json)
   end
 
   def mk_list do
-    Sparkpost.MockServer.mk_http_resp(200, list_json)
+    SparkPost.MockServer.mk_http_resp(200, list_json)
   end
 
   def mk_get do
-    Sparkpost.MockServer.mk_http_resp(200, get_json)
+    SparkPost.MockServer.mk_http_resp(200, get_json)
   end
 
   def mk_http_resp(status_code, body) do

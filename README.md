@@ -36,7 +36,7 @@ In your config/config.exs file:
 config :sparkpost, api_key: "YOUR-API-KEY"
 ```
 
-### Option 1: Use Convenience Functions
+### Option 1: Convenience
 
 ```elixir
 defmodule MyApp.Example do
@@ -52,7 +52,7 @@ defmodule MyApp.Example do
 end
 ```
 
-### Option 2: Use Advanced Functions
+### Option 2: Full SparkPost API
 
 ```elixir
 defmodule MyApp.Example do

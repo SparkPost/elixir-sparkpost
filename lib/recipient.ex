@@ -1,4 +1,4 @@
-defmodule Sparkpost.Recipient do
+defmodule SparkPost.Recipient do
   defstruct address: :required,
     return_path: nil,
     tags: nil,
@@ -19,16 +19,16 @@ defmodule Sparkpost.Recipient do
   end
 
   def to_recipient_list(%{list_id: list_id}) do
-    %Sparkpost.Recipient.ListRef{list_id: list_id}
+    %SparkPost.Recipient.ListRef{list_id: list_id}
   end
 
   def to_recipient(email) when is_binary(email) do
-    %__MODULE__{ address: %Sparkpost.Address{ email: email }}
+    %__MODULE__{ address: %SparkPost.Address{ email: email }}
   end
 
   def to_recipient(struc) when is_map(struc) do
-    struct(Sparkpost.Recipient, %{
-      struc | address: Sparkpost.Address.to_address(struc.address),
+    struct(SparkPost.Recipient, %{
+      struc | address: SparkPost.Address.to_address(struc.address),
     })
   end
 end

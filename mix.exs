@@ -1,4 +1,4 @@
-defmodule Sparkpost.Mixfile do
+defmodule SparkPost.Mixfile do
   use Mix.Project
 
   def project do

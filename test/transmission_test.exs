@@ -1,12 +1,12 @@
-defmodule Sparkpost.TransmissionTest do
+defmodule SparkPost.TransmissionTest do
   use ExUnit.Case
 
-  alias Sparkpost.Transmission
-  alias Sparkpost.Recipient
-  alias Sparkpost.Address
-  alias Sparkpost.Content
+  alias SparkPost.Transmission
+  alias SparkPost.Recipient
+  alias SparkPost.Address
+  alias SparkPost.Content
 
-  alias Sparkpost.MockServer
+  alias SparkPost.MockServer
 
   import Mock
 
@@ -76,7 +76,7 @@ defmodule Sparkpost.TransmissionTest do
   test "Transmission.create fails with Endpoint.Error" do
     with_mock HTTPotion, [request: MockServer.mk_fail] do
       resp = Transmission.create(TestStructs.basic_transmission)
-      assert %Sparkpost.Endpoint.Error{} = resp
+      assert %SparkPost.Endpoint.Error{} = resp
     end
   end
 
@@ -132,7 +132,7 @@ defmodule Sparkpost.TransmissionTest do
   test "Transmission.create marshals inline text/html content correctly" do
     content = %Content.Inline{
       from: Address.to_address("me@here.com"),
-      subject: "Testing Sparkpost and Elixir",
+      subject: "Testing SparkPost and Elixir",
       text: "We all live in a transient theoretical construct"
     }
     TestRequests.test_create(
@@ -163,7 +163,7 @@ defmodule Sparkpost.TransmissionTest do
   test "Transmission.list fails with Endpoint.Error" do
     with_mock HTTPotion, [request: MockServer.mk_fail] do
       resp = Transmission.list
-      assert %Sparkpost.Endpoint.Error{} = resp
+      assert %SparkPost.Endpoint.Error{} = resp
     end
   end
 

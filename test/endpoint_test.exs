@@ -1,8 +1,8 @@
-defmodule Sparkpost.EndpointTest do
+defmodule SparkPost.EndpointTest do
   use ExUnit.Case, async: false
 
-  alias Sparkpost.Endpoint
-  alias Sparkpost.MockServer
+  alias SparkPost.Endpoint
+  alias SparkPost.MockServer
 
   import Mock
 

@@ -1,36 +1,36 @@
-defmodule SparkpostTest do
+defmodule SparkPostTest do
   use ExUnit.Case
 
-  alias Sparkpost.MockServer
-  alias Sparkpost.Recipient
-  alias Sparkpost.Content
-  alias Sparkpost.Address
+  alias SparkPost.MockServer
+  alias SparkPost.Recipient
+  alias SparkPost.Content
+  alias SparkPost.Address
 
   import Mock
 
   test "send succeeds with a Transmission.Response" do
     with_mock HTTPotion, [request: MockServer.mk_resp] do
-      resp = Sparkpost.send(
+      resp = SparkPost.send(
         to: "you@there.com",
         from: "me@here.com",
-        subject: "Elixir and Sparkpost...",
+        subject: "Elixir and SparkPost...",
         text: "Raw text email is boring",
         html: "<marquee>Rich text email is terrifying</marquee>"
       )
-      assert %Sparkpost.Transmission.Response{} = resp
+      assert %SparkPost.Transmission.Response{} = resp
     end
   end
 
   test "send fails with a Endpoint.Error" do
     with_mock HTTPotion, [request: MockServer.mk_fail] do
-      resp = Sparkpost.send(
+      resp = SparkPost.send(
         to: "you@there.com",
         from: nil,
-        subject: "Elixir and Sparkpost...",
+        subject: "Elixir and SparkPost...",
         text: nil,
         html: nil
       )
-      assert %Sparkpost.Endpoint.Error{} = resp
+      assert %SparkPost.Endpoint.Error{} = resp
     end
   end
 
@@ -51,7 +51,7 @@ defmodule SparkpostTest do
       }
       MockServer.mk_resp.(method, url, opts)
     end] do
-      Sparkpost.send(
+      SparkPost.send(
         to: to,
         from: from,
         subject: subject,
