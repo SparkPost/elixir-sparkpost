@@ -1,4 +1,8 @@
 defmodule Washup do
+  @moduledoc """
+  Tools for verifying and pruning Elixir structs before JSON serialisation.
+  """
+
   @doc """
   Walk a possibly nested data structure, filtering out nil values.
 
@@ -22,10 +26,6 @@ defmodule Washup do
       is_list(v) -> filter(v)
       true -> v
     end
-  end
-
-  defmodule RequiredError do
-    defexception path: nil, message: nil
   end
 
   @doc """

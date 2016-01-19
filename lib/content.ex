@@ -1,27 +1,22 @@
 defmodule SparkPost.Content do
-  defmodule Inline do
-    defstruct from: :required,
-      subject: :required,
-      text: nil,
-      html: nil,
-      reply_to: nil,
-      headers: nil,
-      attachments: nil,
-      inline_images: nil
-  end
+  @moduledoc """
+  Various message content representations.
 
-  defmodule Raw do
-    defstruct email_rfc822: :required
-  end
+  Designed for use in `%SparkPost.Transmission{content: ...}`.
 
-  defmodule TemplateRef do
-    defstruct template_id: :required, use_draft_template: nil
-  end
+  See submodules for concrete structs:
+   - `SparkPost.Content.Inline`
+   - `SparkPost.Content.Raw`
+   - `SparkPost.Content.TemplateRef`
+  """
 
-  defmodule Attachment do
-    defstruct name: :required, type: :required, data: :required
-  end
+  @doc """
+  Create a %SparkPost.Content.Attachment from raw fields.
 
+  ## Example
+      SparkPost.Content.to_attachment("bob.jpg", "image/jpeg", File.read!("bob.jpg"))
+      #=> %SparkPost.Content.Attachment{name: "bob.jpg", type: "image/jpeg", data: "iVBORw0KGgo..."}
+  """
   def to_attachment(name, type, data) when is_binary(data) do
     %SparkPost.Content.Attachment{
       name: name,
@@ -30,6 +25,36 @@ defmodule SparkPost.Content do
     }
   end
 
+  @doc ~S"""
+  Convenience conversions:
+   - %{email_rc822: ...} -> %SparkPost.Content.Raw
+   - %{template_id: ..., use_draft_template: ...} -> %SparkPost.Content.TemplateRef
+   - %{...} -> %SparkPost.Content.Inline
+
+  ## Examples
+  Raw content:
+      SparkPost.Content.to_content(%{email_rfc822: "Content-Type: text/plain\r\nTo: \"{{address.name}}\" <{{address.email}}>\r\n\r\nThis message came from Elixir\r\n"})
+      #=> %SparkPost.Content.Raw{email_rfc822: "Content-Type: text/plain\r\nTo: \"{{address.name}}\" <{{address.email}}>\r\n\r\nThis message came from Elixir\r\n"}
+
+  Stored template:
+      SparkPost.Content.to_content(%{
+        template_id: "template-101",
+        use_draft_template: true
+      })
+      #=> %SparkPost.Content.TemplateRef{template_id: "template-101", use_draft_template: true}
+
+  Inline content:
+      Sparkpost.Content.to_content(%{
+        from: "me@here.com",
+        subject: "Elixir rocks",
+        text: "A simple little message"
+      })
+      #=> %SparkPost.Content.Inline{
+        from: "me@here.com",
+        subject: "Elixir rocks",
+        text: "A simple little message"
+      }
+  """
   def to_content(%{email_rfc822: email_rfc822}) do
     %SparkPost.Content.Raw{email_rfc822: email_rfc822}
   end

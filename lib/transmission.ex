@@ -1,12 +1,3 @@
-defmodule SparkPost.Transmission.Options do
-  defstruct start_time: nil,
-    open_tracking: true,
-    click_tracking: true,
-    transactional: nil,
-    sandbox: nil,
-    skip_suppression: nil
-end
-
 defmodule SparkPost.Transmission do
   @moduledoc """
   The SparkPost Transmission API endpoint for sending email. Use `SparkPost.Transmission.create/1` to
@@ -15,7 +6,41 @@ defmodule SparkPost.Transmission do
 
   Check out the documentation for each function
   or use the [SparkPost API reference](https://www.sparkPost.com/api#/reference/transmissions) for details.
+
+  ## Request Fields
+  Used in calls to `SparkPost.Transmission.create/1`.
+   - campaign_id
+   - return_path
+   - metadata
+   - substitution_data
+   - recipients
+   - content
+
+  Returned by `SparkPost.Transmission.list/1`.
+   - id
+   - campaign_id
+   - description
+   - content
+
+  Returned by `SparkPost.Transmission.get/1`.
+   - id
+   - description
+   - state
+   - campaign_id
+   - content
+   - return_path
+   - rcpt_list_chunk_size
+   - rcpt_list_total_chunks
+   - num_rcpts
+   - num_generated
+   - num_failed_gen
+   - generation_start_time
+   - generation_end_time
+   - substitution_data
+   - metadata
+   - options
   """
+
   defstruct options: %SparkPost.Transmission.Options{},
     campaign_id: nil,
     return_path: :required,
@@ -33,12 +58,6 @@ defmodule SparkPost.Transmission do
     num_failed_gen: nil,
     generation_start_time: nil,
     generation_end_time: nil
-
-  defmodule Response do
-    defstruct id: nil,
-      total_accepted_recipients: nil,
-      total_rejected_recipients: nil
-  end
 
   @doc """
   Create a new transmission and send some email.

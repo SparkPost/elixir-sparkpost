@@ -1,4 +1,6 @@
-%{"certifi": {:hex, :certifi, "0.3.0"},
+%{"bunt": {:hex, :bunt, "0.1.4"},
+  "certifi": {:hex, :certifi, "0.3.0"},
+  "credo": {:hex, :credo, "0.3.0-dev"},
   "excoveralls": {:hex, :excoveralls, "0.4.5"},
   "exjsx": {:hex, :exjsx, "3.2.0"},
   "hackney": {:hex, :hackney, "1.4.8"},

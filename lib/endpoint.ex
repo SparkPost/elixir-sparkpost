@@ -6,14 +6,6 @@ defmodule SparkPost.Endpoint do
 
   @default_endpoint "https://api.sparkpost.com/api/v1/"
 
-  defmodule Response do
-    defstruct status_code: nil, results: nil
-  end
-
-  defmodule Error do
-    defstruct status_code: nil, errors: nil, results: nil
-  end
-
   @doc """
   Make a request to the SparkPost API.
 

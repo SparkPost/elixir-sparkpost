@@ -54,17 +54,15 @@ end
 
 ```elixir
 defmodule MyApp.Example do
-  alias SparkPost.Transmission
-  alias SparkPost.Recipient
-  alias SparkPost.Template
+  alias SparkPost.{Transmission, Recipient, Content, Address}
 
   def send_message do
     Transmission.create(%Transmission{
-        recipients: [ %Recipient{ address: %Sparkpost.Address{ email: "your@example.com" }} ],
+        recipients: [ %Recipient{ address: %Address{ email: "you@example.com" }} ],
         return_path: "elixir@sparkpostbox.com",
-        content: %Template.Inline{
+        content: %Content.Inline{
           subject: "Sending email from Elixir is awesome!",
-          from: %Sparkpost.Address{ email: "elixir@sparkpostbox.com" },
+          from: %Address{ email: "elixir@sparkpostbox.com" },
           text: "Hi there!",
           html: "<p>Hi there!</p>"
         }

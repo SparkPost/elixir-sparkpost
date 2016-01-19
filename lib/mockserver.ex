@@ -1,4 +1,6 @@
 defmodule SparkPost.MockServer do
+  @moduledoc false
+
   def create_json(endpoint\\"transmission") do
     File.read!("test/data/create#{endpoint}.json")
   end

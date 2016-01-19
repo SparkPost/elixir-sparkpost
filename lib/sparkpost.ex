@@ -14,9 +14,8 @@ defmodule SparkPost do
     learn about the SparkPost API itself from the
     [reference docs](https://www.sparkpost.com/api).
   """
-  alias SparkPost.Transmission
-  alias SparkPost.Content
-  alias SparkPost.Recipient
+
+  alias SparkPost.{Transmission, Content, Recipient}
 
   @doc """
   A simple email sending function based on the SparkPost API.
