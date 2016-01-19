@@ -40,10 +40,8 @@ config :sparkpost, api_key: "YOUR-API-KEY"
 
 ```elixir
 defmodule MyApp.Example do
-  use SparkPost.Transmission
-
   def send_message do
-    send to: "you@example.com",
+    SparkPost.send to: "you@example.com",
          from: "elixir@sparkpostbox.com",
          subject: "Sending email from Elixir is awesome!",
          text: "Hi there!",
