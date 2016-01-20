@@ -79,15 +79,12 @@ defmodule SparkPost.Endpoint do
   end
 
   defp encode_request_body(body) do
-    {:ok, req} = body |> Washup.filter |> Poison.encode
-    # IO.puts req
-    req
+    body |> Washup.filter |> Poison.encode!
   end
 
   defp decode_response_body(body) do
     # TODO: [key: :atoms] is unsafe for open-ended structures such as
     # metadata and substitution_data
-    {:ok, resp} = body |> Poison.decode([keys: :atoms])
-    resp
+    body |> Poison.decode!([keys: :atoms])
   end
 end

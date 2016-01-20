@@ -4,8 +4,7 @@ filename = "test/data/sparky.png"
 
 SparkPost.Transmission.create(
   %SparkPost.Transmission{
-    options: %SparkPost.Transmission.Options{},
-    recipients: SparkPost.Recipient.to_recipient_list([to]),
+    recipients: [to],
     return_path: from,
     content: %SparkPost.Content.Inline{
       from: from,

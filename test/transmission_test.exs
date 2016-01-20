@@ -1,12 +1,7 @@
 defmodule SparkPost.TransmissionTest do
   use ExUnit.Case
 
-  alias SparkPost.Transmission
-  alias SparkPost.Recipient
-  alias SparkPost.Address
-  alias SparkPost.Content
-
-  alias SparkPost.MockServer
+  alias SparkPost.{Transmission, Recipient, Address, Content, MockServer}
 
   import Mock
 
@@ -20,8 +15,19 @@ defmodule SparkPost.TransmissionTest do
       }
     end
 
-    def inline_recipient do
-      [ %Recipient{ address: %Address{ email: "to@you.com" }} ]
+    def full_addr_recipient(fulladdr) when is_binary(fulladdr) do
+      case Regex.run(~r/\s*(.+)\s+<(.+@.+)>\s*$/, fulladdr) do
+        [_, name, addr] -> full_addr_recipient(name, addr)
+        true -> raise "Invalid email address: #{fulladdr}"
+      end
+    end
+
+    def full_addr_recipient(name\\"You There", email\\"you@there.com") do
+      %Recipient{ address: %Address{ name: name, email: email} }
+    end
+
+    def addr_spec_recipient(email\\"you@there.com") do
+      %Recipient{ address: %Address{ email: email } }
     end
 
     def inline_content do
@@ -36,7 +42,7 @@ defmodule SparkPost.TransmissionTest do
     def basic_transmission do
       skeleton(
         options: %Transmission.Options{},
-        recipients: inline_recipient,
+        recipients: [full_addr_recipient],
         content: inline_content
       )
     end
@@ -57,12 +63,34 @@ defmodule SparkPost.TransmissionTest do
         fullreq = struct(Transmission, %{
           req |
           options: struct(Transmission.Options, req.options),
-          recipients: Recipient.to_recipient_list(req.recipients),
+          recipients: parse_recipients_field(req.recipients),
           content: Content.to_content(req.content)
         })
         response_test_fn.(fullreq)
         MockServer.mk_resp.(method, url, opts)
       end
+    end
+
+    defp parse_recipients_field(lst) when is_list(lst) do
+      Enum.map(lst, fn recip -> 
+        struct(Recipient, parse_recipient(recip))
+      end)
+    end
+
+    defp parse_recipients_field(%{list_id: _} = listref) do
+      struct(Recipient.ListRef, listref)
+    end
+
+    defp parse_recipient(%{address: addr} = recip) do
+      %{recip | address: parse_address(addr)}
+    end
+
+    defp parse_address(%{name: name, email: email}) do
+      %Address{name: name, email: email}
+    end
+
+    defp parse_address(%{email: email}) do
+      %Address{email: email}
     end
   end
 
@@ -75,7 +103,8 @@ defmodule SparkPost.TransmissionTest do
 
   test "Transmission.create fails with Endpoint.Error" do
     with_mock HTTPotion, [request: MockServer.mk_fail] do
-      resp = Transmission.create(TestStructs.basic_transmission)
+      req = TestStructs.basic_transmission
+      resp = Transmission.create(req)
       assert %SparkPost.Endpoint.Error{} = resp
     end
   end
@@ -104,11 +133,64 @@ defmodule SparkPost.TransmissionTest do
   end
 
   test "Transmission.create marshals inline recipients correctly" do
-    recipients = Recipient.to_recipient_list(["to@you.com", "to@them.com"])
+    recipients = [
+      TestStructs.full_addr_recipient("You There", "you@there.com"),
+      TestStructs.full_addr_recipient("Them There", "them@there.com")
+    ]
     TestRequests.test_create(
       %{TestStructs.basic_transmission | recipients: recipients},
       &(assert &1.recipients == recipients)
     )
+  end
+
+  test "Transmission.create accepts a list of long-form recipient email addresses" do
+    # RFC2822 3.4: Address Specification
+    recipients = ["You There <you@there.com>", "You Too There <youtoo@theretoo.com>"]
+    expected = Enum.map recipients, fn recip ->
+      TestStructs.full_addr_recipient(recip)
+    end
+    TestRequests.test_create(
+      %{TestStructs.basic_transmission | recipients: recipients},
+      &(assert &1.recipients == expected)
+    )
+  end
+
+  test "Transmission.create accepts a list of short-form recipient email addresses" do
+    # RFC2822 3.4.1: Addr-spec specification
+    recipients = ["you@there.com", "youtoo@theretoo.com"]
+    expected = Enum.map recipients, fn recip ->
+      TestStructs.addr_spec_recipient(recip)
+    end
+    TestRequests.test_create(
+      %{TestStructs.basic_transmission | recipients: recipients},
+      &(assert &1.recipients == expected)
+    )
+  end
+
+  test "Transmission.create accepts a mixed list recipient addresses" do
+    recip0 = "You There <you@there.com>"
+    recip1 = "youtoo@theretoo.com"
+    recip2 = %Address{name: "You Also", email: "you@also.com"}
+    recip3 = %{name: "And You", email: "and@you.com"}
+    recip4 = %{email: "me@too.com"}
+    recipients = [recip0, recip1, recip2, recip3, recip4]
+    expected = [
+      TestStructs.full_addr_recipient(recip0),
+      TestStructs.addr_spec_recipient(recip1),
+      %Recipient{address: recip2},
+      %Recipient{address: %Address{name: recip3.name, email: recip3.email}},
+      %Recipient{address: %Address{email: recip4.email}}
+    ]
+    TestRequests.test_create(
+      %{TestStructs.basic_transmission | recipients: recipients},
+      &(assert &1.recipients == expected)
+    )
+  end
+
+  test "Transmission.create requires correctly-formatted email addresses" do
+    assert_raise Recipient.FormatError, fn -> TestRequests.test_create(
+      %{TestStructs.basic_transmission | recipients: "paula and paul"}, &(&1))
+    end
   end
 
   test "Transmission.create marshals recipient lists correctly" do

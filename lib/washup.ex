@@ -48,7 +48,7 @@ defmodule Washup do
 
   defp verify_val(val, path) do
     case val do
-      :required -> raise RequiredError,
+      :required -> raise Washup.RequiredError,
         path: path,
         message: Enum.join(Enum.reverse(path), "->") <> " required"
       _ -> val

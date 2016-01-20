@@ -59,6 +59,8 @@ defmodule SparkPost.Transmission do
     generation_start_time: nil,
     generation_end_time: nil
 
+  alias SparkPost.{Transmission, Recipient, Endpoint}
+
   @doc """
   Create a new transmission and send some email.
 
@@ -119,8 +121,9 @@ defmodule SparkPost.Transmission do
         total_accepted_recipients: 1, total_rejected_recipients: 0}
   """
   def create(%__MODULE__{} = body) do
-    response = SparkPost.Endpoint.request(:post, "transmissions", [body: body])
-    SparkPost.Endpoint.marshal_response(response, SparkPost.Transmission.Response)
+    body = %{body | recipients: Recipient.to_recipient_list(body.recipients)}
+    response = Endpoint.request(:post, "transmissions", [body: body])
+    Endpoint.marshal_response(response, Transmission.Response)
   end
 
   @doc """
@@ -143,8 +146,8 @@ defmodule SparkPost.Transmission do
              substitution_data: ""}
   """
   def get(transid) do
-    response = SparkPost.Endpoint.request(:get, "transmissions/" <> transid, [])
-    SparkPost.Endpoint.marshal_response(response, __MODULE__, :transmission)
+    response = Endpoint.request(:get, "transmissions/" <> transid, [])
+    Endpoint.marshal_response(response, __MODULE__, :transmission)
   end
 
   @doc """
@@ -172,9 +175,9 @@ defmodule SparkPost.Transmission do
         return_path: :required, state: "Success", substitution_data: nil}]
   """
   def list(filters\\[]) do
-    response = SparkPost.Endpoint.request(:get, "transmissions", [params: filters])
+    response = Endpoint.request(:get, "transmissions", [params: filters])
     case response do
-      %SparkPost.Endpoint.Response{} ->
+      %Endpoint.Response{} ->
         Enum.map(response.results, fn (trans) -> struct(__MODULE__, trans) end)
       _ -> response
     end
