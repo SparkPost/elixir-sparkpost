@@ -63,6 +63,11 @@ defmodule SparkPost.Content do
     %SparkPost.Content.TemplateRef{template_id: template_id, use_draft_template: draft_flag}
   end
 
+  def to_content(%SparkPost.Content.Inline{} = content) do
+    %{ content |
+      from: SparkPost.Address.to_address(content.from)}
+  end
+
   def to_content(content) when is_map(content) do
     %{ struct(SparkPost.Content.Inline, content) |
       from: SparkPost.Address.to_address(content.from)}

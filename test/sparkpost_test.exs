@@ -1,10 +1,7 @@
 defmodule SparkPostTest do
   use ExUnit.Case
 
-  alias SparkPost.MockServer
-  alias SparkPost.Recipient
-  alias SparkPost.Content
-  alias SparkPost.Address
+  alias SparkPost.{Address, Content, Recipient, MockServer}
 
   import Mock
 
@@ -25,7 +22,7 @@ defmodule SparkPostTest do
     with_mock HTTPotion, [request: MockServer.mk_fail] do
       resp = SparkPost.send(
         to: "you@there.com",
-        from: nil,
+        from: "me@here.com",
         subject: "Elixir and SparkPost...",
         text: nil,
         html: nil

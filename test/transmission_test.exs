@@ -49,15 +49,15 @@ defmodule SparkPost.TransmissionTest do
   end
 
   defmodule TestRequests do
-    def test_create(req, test_fn) do
+    def test_send(req, test_fn) do
       with_mock HTTPotion, [
-        request: handle_create(test_fn)
+        request: handle_send(test_fn)
       ] do
-        Transmission.create(req)
+        Transmission.send(req)
       end
     end
 
-    defp handle_create(response_test_fn) do
+    defp handle_send(response_test_fn) do
       fn (method, url, opts) ->
         req = Poison.decode!(opts[:body], [keys: :atoms])
         fullreq = struct(Transmission, %{
@@ -94,31 +94,31 @@ defmodule SparkPost.TransmissionTest do
     end
   end
 
-  test "Transmission.create succeeds with Transmission.Response" do
+  test "Transmission.send succeeds with Transmission.Response" do
     with_mock HTTPotion, [request: MockServer.mk_resp] do
-      resp = Transmission.create(TestStructs.basic_transmission)
+      resp = Transmission.send(TestStructs.basic_transmission)
       assert %Transmission.Response{} = resp
     end
   end
 
-  test "Transmission.create fails with Endpoint.Error" do
+  test "Transmission.send fails with Endpoint.Error" do
     with_mock HTTPotion, [request: MockServer.mk_fail] do
       req = TestStructs.basic_transmission
-      resp = Transmission.create(req)
+      resp = Transmission.send(req)
       assert %SparkPost.Endpoint.Error{} = resp
     end
   end
 
-  test "Transmission.create emits a POST" do
+  test "Transmission.send emits a POST" do
     with_mock HTTPotion, [request: fn (method, url, opts) ->
       assert method == :post
       MockServer.mk_resp.(method, url, opts)
     end] do
-      Transmission.create(TestStructs.basic_transmission)
+      Transmission.send(TestStructs.basic_transmission)
     end
   end
 
-  test "Transmission.create marshals options correctly" do
+  test "Transmission.send marshals options correctly" do
     transopts = %Transmission.Options{
       open_tracking: true,
       click_tracking: false,
@@ -126,48 +126,48 @@ defmodule SparkPost.TransmissionTest do
       sandbox: false,
       skip_suppression: false
     }
-    TestRequests.test_create(
+    TestRequests.test_send(
       %{TestStructs.basic_transmission | options: transopts},
       &(assert &1.options == transopts)
     )
   end
 
-  test "Transmission.create marshals inline recipients correctly" do
+  test "Transmission.send marshals inline recipients correctly" do
     recipients = [
       TestStructs.full_addr_recipient("You There", "you@there.com"),
       TestStructs.full_addr_recipient("Them There", "them@there.com")
     ]
-    TestRequests.test_create(
+    TestRequests.test_send(
       %{TestStructs.basic_transmission | recipients: recipients},
       &(assert &1.recipients == recipients)
     )
   end
 
-  test "Transmission.create accepts a list of long-form recipient email addresses" do
+  test "Transmission.send accepts a list of long-form recipient email addresses" do
     # RFC2822 3.4: Address Specification
     recipients = ["You There <you@there.com>", "You Too There <youtoo@theretoo.com>"]
     expected = Enum.map recipients, fn recip ->
       TestStructs.full_addr_recipient(recip)
     end
-    TestRequests.test_create(
+    TestRequests.test_send(
       %{TestStructs.basic_transmission | recipients: recipients},
       &(assert &1.recipients == expected)
     )
   end
 
-  test "Transmission.create accepts a list of short-form recipient email addresses" do
+  test "Transmission.send accepts a list of short-form recipient email addresses" do
     # RFC2822 3.4.1: Addr-spec specification
     recipients = ["you@there.com", "youtoo@theretoo.com"]
     expected = Enum.map recipients, fn recip ->
       TestStructs.addr_spec_recipient(recip)
     end
-    TestRequests.test_create(
+    TestRequests.test_send(
       %{TestStructs.basic_transmission | recipients: recipients},
       &(assert &1.recipients == expected)
     )
   end
 
-  test "Transmission.create accepts a mixed list recipient addresses" do
+  test "Transmission.send accepts a mixed list recipient addresses" do
     recip0 = "You There <you@there.com>"
     recip1 = "youtoo@theretoo.com"
     recip2 = %Address{name: "You Also", email: "you@also.com"}
@@ -181,54 +181,59 @@ defmodule SparkPost.TransmissionTest do
       %Recipient{address: %Address{name: recip3.name, email: recip3.email}},
       %Recipient{address: %Address{email: recip4.email}}
     ]
-    TestRequests.test_create(
+    TestRequests.test_send(
       %{TestStructs.basic_transmission | recipients: recipients},
       &(assert &1.recipients == expected)
     )
   end
 
-  test "Transmission.create requires correctly-formatted email addresses" do
-    assert_raise Recipient.FormatError, fn -> TestRequests.test_create(
+  test "Transmission.send requires correctly-formatted email addresses" do
+    assert_raise Address.FormatError, fn -> TestRequests.test_send(
       %{TestStructs.basic_transmission | recipients: "paula and paul"}, &(&1))
     end
   end
 
-  test "Transmission.create marshals recipient lists correctly" do
+  test "Transmission.send marshals recipient lists correctly" do
     recip_lst = %Recipient.ListRef{list_id: "list101"}
-    TestRequests.test_create(
+    TestRequests.test_send(
       %{TestStructs.basic_transmission | recipients: recip_lst},
       &(assert &1.recipients == recip_lst)
     )
   end
 
-  test "Transmission.create marshals inline raw content correctly" do
+  test "Transmission.send marshals inline raw content correctly" do
     content = %Content.Raw{
       email_rfc822: "Content-Type: text/plain\r\nTo: \"{{address.name}}\" <{{address.email}}>\r\n\r\n We are testing Elixir and SparkPost together\r\n"
     }
-    TestRequests.test_create(
+    TestRequests.test_send(
       %{TestStructs.basic_transmission | content: content},
       &(assert &1.content == content)
     )
   end
 
-  test "Transmission.create marshals inline text/html content correctly" do
+  test "Transmission.send marshals inline text/html content correctly" do
     content = %Content.Inline{
-      from: Address.to_address("me@here.com"),
+      from: "me@here.com",
       subject: "Testing SparkPost and Elixir",
       text: "We all live in a transient theoretical construct"
     }
-    TestRequests.test_create(
+    expected = %Content.Inline{
+      from: %Address{email: "me@here.com"},
+      subject: "Testing SparkPost and Elixir",
+      text: "We all live in a transient theoretical construct"
+    }
+    TestRequests.test_send(
       %{TestStructs.basic_transmission | content: content},
-      &(assert &1.content == content)
+      &(assert &1.content == expected)
     )
   end
 
-  test "Transmission.create marshals template references correctly" do
+  test "Transmission.send marshals template references correctly" do
     content = %Content.TemplateRef{
       template_id: "template101",
       use_draft_template: true
     }
-    TestRequests.test_create(
+    TestRequests.test_send(
       %{TestStructs.basic_transmission | content: content},
       &(assert &1.content == content)
     )

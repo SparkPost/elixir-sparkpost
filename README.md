@@ -54,15 +54,15 @@ end
 
 ```elixir
 defmodule MyApp.Example do
-  alias SparkPost.{Transmission, Recipient, Content, Address}
-
-  def send_message do
-    Transmission.create(%Transmission{
+  alias SparkPost.{Content, Recipient, Transmission}
+  
+	def send_message do
+    Transmission.send(%Transmission{
         recipients: [ "you@example.com" ],
         return_path: "elixir@sparkpostbox.com",
         content: %Content.Inline{
           subject: "Sending email from Elixir is awesome!",
-          from: %Address{ email: "elixir@sparkpostbox.com" },
+          from: "elixir@sparkpostbox.com", 
           text: "Hi there!",
           html: "<p>Hi there!</p>"
         }
@@ -80,6 +80,8 @@ Start your app and send a message:
 ```
 
 ### Contribute
+
+We welcome contributions!  See [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to help out.
 
 ### Change Log
 

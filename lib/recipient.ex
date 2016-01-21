@@ -45,13 +45,7 @@ defmodule SparkPost.Recipient do
    - `%SparkPost.Address{}`
   """
   def to_recipient(addr) when is_binary(addr) do
-    case Regex.run(~r/\s*(.+)\s+<(.+@.+)>\s*$/, addr) do
-      [_, name, email] -> %__MODULE__{ address: %Address{ name: name, email: email }}
-      nil -> case Regex.run(~r/\s*(.+@.+)\s*$/, addr) do
-        [_, email] -> %__MODULE__{ address: %Address{ email: email }}
-        nil -> raise Recipient.FormatError, message: "Invalid email address: #{addr}"
-      end
-    end
+    %__MODULE__{address: Address.to_address(addr)}
   end
 
   def to_recipient(%__MODULE__{} = recip) do

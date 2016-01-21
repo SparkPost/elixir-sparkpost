@@ -1,6 +1,6 @@
 defmodule SparkPost.Transmission do
   @moduledoc """
-  The SparkPost Transmission API endpoint for sending email. Use `SparkPost.Transmission.create/1` to
+  The SparkPost Transmission API endpoint for sending email. Use `SparkPost.Transmission.send/1` to
   send messages, SparkPost.Transmission.list/1 to list previous sends and SparkPost.Transmission.get/1 to
   retrieve details on a given transmission.
 
@@ -8,7 +8,7 @@ defmodule SparkPost.Transmission do
   or use the [SparkPost API reference](https://www.sparkPost.com/api#/reference/transmissions) for details.
 
   ## Request Fields
-  Used in calls to `SparkPost.Transmission.create/1`.
+  Used in calls to `SparkPost.Transmission.send/1`.
    - campaign_id
    - return_path
    - metadata
@@ -59,14 +59,14 @@ defmodule SparkPost.Transmission do
     generation_start_time: nil,
     generation_end_time: nil
 
-  alias SparkPost.{Transmission, Recipient, Endpoint}
+  alias SparkPost.{Transmission, Recipient, Endpoint, Content}
 
   @doc """
   Create a new transmission and send some email.
 
   ## Parameters
   - %SparkPost.Transmission{} consisting of:
-    - recipients: [%SparkPost.Recipient{}] or %SparkPost.Recipient.ListRef{}
+    - recipients: ["email@address", %SparkPost.Recipient{}, ...] or %SparkPost.Recipient.ListRef{}
     - content: %SparkPost.Content.Inline{}, %SparkPost.Content.Raw{} or %SparkPost.Content.TemplateRef{}
     - options: %SparkPost.Transmission.Options{}
     - campaign_id: campaign identifier (string)
@@ -77,51 +77,55 @@ defmodule SparkPost.Transmission do
   ## Examples
   Send a message to a single recipient with inline text and HTML content:
 
-      SparkPost.Transmission.create(%SparkPost.Transmission{
-        recipients: [
-          %SparkPost.Recipient{ address: %SparkPost.Address{ email: "to@you.com" }}
-        ],
+      alias SparkPost.{Content, Transmission}
+      Transmission.send(%Transmission{
+        recipients: ["to@you.com"],
         return_path: "from@me.com",
-        content: %SparkPost.Content.Inline{
+        content: %Content.Inline{
+          from: "from@me.com", 
           subject: subject,
-          from: %SparkPost.Address{ email: "from@me.com" },
           text: text,
           html: html
         }
       })
-      #=> SparkPost.Transmission.Response{id: "102258889940193104",
+      #=> %Transmission.Response{id: "102258889940193104",
         total_accepted_recipients: 1, total_rejected_recipients: 0}
 
   Send a message to 2 recipients using a stored message template:
-      SparkPost.Transmission.create(
-        %SparkPost.Transmission{
-          recipients: SparkPost.Recipient.to_recipient_list ["to@you.com", "to@youtoo.com"],
+      alias SparkPost.Content, Transmission}
+      Transmission.send(
+        %Transmission{
+          recipients: ["to@you.com", "to@youtoo.com"],
           return_path: "from@me.com",
-          content: %SparkPost.Content.TemplateRef{ template_id: "test-template-1" }
+          content: %Content.TemplateRef{ template_id: "test-template-1" }
         }
       )
-      #=> SparkPost.Transmission.Response{id: "102258889940193105",
+      #=> %Transmission.Response{id: "102258889940193105",
         total_accepted_recipients: 2, total_rejected_recipients: 0}
 
   Send a message with an attachment:
-    SparkPost.Transmission.create(
-      %SparkPost.Transmission{
-        recipients: SparkPost.Recipient.to_recipient_list ["to@you.com"],
+    alias SparkPost.{Content, Transmission}
+    Transmission.send(
+      %Transmission{
+        recipients: ["to@you.com"],
         return_path: "from@me.com",
-        content: %SparkPost.Content.Inline{
+        content: %Content.Inline{
           subject: "Now with attachments!",
           text: "There is an attachment with this message",
           attachments: [
-            SparkPost.Content.to_attachment("cat.jpg", "image/jpeg", File.read!("cat.jpg"))
+            Content.to_attachment("cat.jpg", "image/jpeg", File.read!("cat.jpg"))
           ]
         }
       }
     )
-    #=> SparkPost.Transmission.Response{id: "102258889940193106",
+    #=> %Transmission.Response{id: "102258889940193106",
         total_accepted_recipients: 1, total_rejected_recipients: 0}
   """
-  def create(%__MODULE__{} = body) do
-    body = %{body | recipients: Recipient.to_recipient_list(body.recipients)}
+  def send(%__MODULE__{} = body) do
+    body = %{body |
+      recipients: Recipient.to_recipient_list(body.recipients),
+      content: Content.to_content(body.content)
+    }
     response = Endpoint.request(:post, "transmissions", [body: body])
     Endpoint.marshal_response(response, Transmission.Response)
   end
@@ -133,8 +137,8 @@ defmodule SparkPost.Transmission do
    - transmission ID: identifier of the transmission to retrieve
 
   ## Example
-      SparkPost.Transmission.get("102258889940193105")
-      #=> %SparkPost.Transmission{campaign_id: "",
+      Transmission.get("102258889940193105")
+      #=> %Transmission{campaign_id: "",
              content: %{template_id: "inline", template_version: 0,
                use_draft_template: false}, description: "",
              generation_end_time: "2016-01-14T12:52:05+00:00",
@@ -160,14 +164,14 @@ defmodule SparkPost.Transmission do
 
   ## Example
   List all multi-recipient transmissions:
-      SparkPost.Transmission.list()
-      #=> [%SparkPost.Transmission{campaign_id: "", content: %{template_id: "inline"},
+      Transmission.list()
+      #=> [%Transmission{campaign_id: "", content: %{template_id: "inline"},
         description: "", generation_end_time: nil, generation_start_time: nil,
         id: "102258558346809186", metadata: nil, num_failed_gen: nil,
         num_generated: nil, num_rcpts: nil, options: :required,
         rcp_list_total_chunks: nil, rcpt_list_chunk_size: nil, recipients: :required,
         return_path: :required, state: "Success", substitution_data: nil},
-       %SparkPost.Transmission{campaign_id: "", content: %{template_id: "inline"},
+       %Transmission{campaign_id: "", content: %{template_id: "inline"},
         description: "", generation_end_time: nil, generation_start_time: nil,
         id: "48215348926834924", metadata: nil, num_failed_gen: nil,
         num_generated: nil, num_rcpts: nil, options: :required,

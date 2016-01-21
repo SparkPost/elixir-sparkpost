@@ -15,7 +15,7 @@ defmodule SparkPost do
     [reference docs](https://www.sparkpost.com/api).
   """
 
-  alias SparkPost.{Transmission, Content, Recipient}
+  alias SparkPost.{Address, Content, Transmission}
 
   @doc """
   A simple email sending function based on the SparkPost API.
@@ -36,13 +36,12 @@ defmodule SparkPost do
         html: "This is the <strong>tasty</strong> <em>rich</em> version of the <a href=\"https://www.sparkpost.com/\">email</a> body."
   """
   def send(to: recip, from: sender, subject: subject, text: text, html: html) do
-    Transmission.create(%Transmission{
-      options: %Transmission.Options{},
-      recipients: Recipient.to_recipient_list(recip),
-      return_path: sender,
+    Transmission.send(%Transmission{
+      recipients: recip,
+      return_path: Address.to_address(sender).email,
       content: %Content.Inline{
         subject: subject,
-        from: %SparkPost.Address{ email: sender },
+        from: sender,
         text: text,
         html: html
       }

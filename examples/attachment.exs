@@ -1,8 +1,8 @@
-from = "me@here.com"
-to = "you@there.com"
+from = "elixir@sparkpostbox.com"
+to = "ewan.dennis@sparkpost.com"
 filename = "test/data/sparky.png"
 
-SparkPost.Transmission.create(
+SparkPost.Transmission.send(
   %SparkPost.Transmission{
     recipients: [to],
     return_path: from,
