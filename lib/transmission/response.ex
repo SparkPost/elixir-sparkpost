@@ -2,7 +2,7 @@ defmodule SparkPost.Transmission.Response do
   @moduledoc """
   The response generated when SparkPost receives a Transmission request.
 
-  Returned by `SparkPost.Transmision.create/1`
+  Returned by `SparkPost.Transmision.send/1`
 
   ## Fields
    - total_accepted_recipients: count of recipients which SparkPost accepted for delivery

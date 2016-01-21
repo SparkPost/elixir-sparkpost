@@ -24,6 +24,7 @@ You can grab the library version number like this: `mix deps | grep sparkpost`
 1. To run the test suite: `mix test`
 1. To check test code coverage: `mix coveralls`
 1. To check coding standards: `mix credo`
+1. To generate reference docs: `mix docs`
 1. Please follow the pull request submission steps in the next section
 
 ## Contribution Steps
@@ -42,4 +43,24 @@ To contribute to elixir-sparkpost:
 
 ### Releasing
 
-TBD
+Check out these general [docs on publishing packages](https://hex.pm/docs/publish) to Hex.
+
+To publish a new release:
+
+1. Update `package` metadata in mix.exs:
+  * bump the version number
+  * add new files you want to distribute
+
+```elixir
+defp package do
+  [
+		version: "0.0.1", # <-- bump this
+	  files: [
+      "lib", "mix.exs", "README.md", "CONTRIBUTING.md" # <-- add new files for distro here
+    ], 
+  ]
+end
+```
+
+3. When you're ready, publish to Hex: `mix hex.publish` 
+
