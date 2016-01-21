@@ -55,7 +55,7 @@ To publish a new release:
 ```elixir
 defp package do
   [
-		version: "0.0.1", # <-- bump this
+		version: "0.1.0", # <-- bump this
 	  files: [
       "lib", "mix.exs", "README.md", "CONTRIBUTING.md" # <-- add new files for distro here
     ], 

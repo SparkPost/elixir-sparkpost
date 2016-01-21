@@ -18,7 +18,7 @@ Capabilities include:
 
 ```elixir
 def deps do
-  [{:sparkpost, "~> 0.0.1"}]
+  [{:sparkpost, "~> 0.1.0"}]
 end
 ```
 
