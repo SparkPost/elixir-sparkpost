@@ -34,12 +34,13 @@ You can grab the library version number like this: `mix deps | grep sparkpost`
 - We include @moduledoc and @doc content (almost) everywhere.
 
 To contribute to elixir-sparkpost:
+
 1. Create a new branch named after the issue you’ll be fixing (include the issue number as the branch name, example: Issue in GH is #8 then the branch name should be ISSUE-8))
-2. Write corresponding tests and code (only what is needed to satisfy the issue and tests please)
+1. Write corresponding tests and code (only what is needed to satisfy the issue and tests please)
     * Include your tests in the 'test' directory in an appropriate test file
     * Write code to satisfy the tests
-3. Ensure automated tests (`mix test`) pass
-4. Submit a new Pull Request applying your feature/fix branch to the `master` branch
+1. Ensure automated tests (`mix test`) pass
+1. Submit a new Pull Request applying your feature/fix branch to the `master` branch
 
 ### Releasing
 
