@@ -14,11 +14,14 @@ Capabilities include:
 
 ## Installation
 
-  1. Add sparkpost to your list of dependencies in `mix.exs`:
+  1. Add sparkpost and ibrowse to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:sparkpost, "~> 0.1.0"}]
+  [
+    {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
+    {:sparkpost, "~> 0.1.0"}
+  ]
 end
 ```
 
