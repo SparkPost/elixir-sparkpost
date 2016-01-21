@@ -2,4 +2,4 @@ language: elixir
 elixir:
   - 1.2.0
 after_success:
-  - mix coveralls.travis
+  - MIX_ENV=test mix coveralls.travis
