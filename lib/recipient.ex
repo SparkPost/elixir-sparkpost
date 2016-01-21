@@ -1,12 +1,31 @@
 defmodule SparkPost.Recipient do
+  @moduledoc """
+  A single recipient.
+
+  Designed for use in `SparkPost.Transmission{recipients: ...}`.
+
+  ## Fields
+   - return_path: `Return-Path` address (email string)
+   - tags: user-specified per-recipient tags (list of string)
+   - metadata: user-specified per-recipient metadata (map)
+   - substitution_data: personalisation fields for use in the message body (map)
+  """
+
   defstruct address: :required,
     return_path: nil,
     tags: nil,
     metadata: nil,
     substitution_data: nil
 
-  defmodule ListRef do
-    defstruct list_id: :required
+  alias SparkPost.{Recipient, Address}
+
+  @doc """
+  Convenience conversions to `[ %SparkPost.Recipient{} ]` from:
+   - `%{list_id: ...}`
+   - mixed list of email strings, %SparkPost.Address structs, %{address: ...} and %{name: ..., email: ...}
+  """
+  def to_recipient_list(%{list_id: list_id}) do
+    %Recipient.ListRef{list_id: list_id}
   end
 
   def to_recipient_list(email_list) when is_list(email_list) do
@@ -18,17 +37,36 @@ defmodule SparkPost.Recipient do
     [ to_recipient(email) ]
   end
 
-  def to_recipient_list(%{list_id: list_id}) do
-    %SparkPost.Recipient.ListRef{list_id: list_id}
+  @doc """
+  Convenience conversions to `%SparkPost.Recipient{}` from:
+   - short form email string (e.g. "you@there.com")
+   - long form email string (e.g. "You There <you@there.com>")
+   - `%{address: ...}`
+   - `%SparkPost.Address{}`
+  """
+  def to_recipient(addr) when is_binary(addr) do
+    %__MODULE__{address: Address.to_address(addr)}
   end
 
-  def to_recipient(email) when is_binary(email) do
-    %__MODULE__{ address: %SparkPost.Address{ email: email }}
+  def to_recipient(%__MODULE__{} = recip) do
+    recip
   end
 
-  def to_recipient(struc) when is_map(struc) do
-    struct(SparkPost.Recipient, %{
-      struc | address: SparkPost.Address.to_address(struc.address),
+  def to_recipient(%Address{} = recip) do
+    %__MODULE__{address: recip}
+  end
+
+  def to_recipient(%{address: address} = struc) do
+    struct(__MODULE__, %{
+      struc | address: Address.to_address(address)
     })
+  end
+
+  def to_recipient(%{name: _name, email: _email} = struc) do
+    %__MODULE__{ address: Address.to_address(struc) }
+  end
+
+  def to_recipient(%{email: _} = struc) do
+    %__MODULE__{ address: Address.to_address(struc) }
   end
 end

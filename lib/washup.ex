@@ -1,4 +1,8 @@
 defmodule Washup do
+  @moduledoc """
+  Tools for verifying and pruning Elixir structs before JSON serialisation.
+  """
+
   @doc """
   Walk a possibly nested data structure, filtering out nil values.
 
@@ -24,10 +28,6 @@ defmodule Washup do
     end
   end
 
-  defmodule RequiredError do
-    defexception path: nil, message: nil
-  end
-
   @doc """
   Walk a possibly nested data structure and raise an exception if a :required
   is found.
@@ -48,7 +48,7 @@ defmodule Washup do
 
   defp verify_val(val, path) do
     case val do
-      :required -> raise RequiredError,
+      :required -> raise Washup.RequiredError,
         path: path,
         message: Enum.join(Enum.reverse(path), "->") <> " required"
       _ -> val

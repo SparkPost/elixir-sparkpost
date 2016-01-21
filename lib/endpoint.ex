@@ -6,14 +6,6 @@ defmodule SparkPost.Endpoint do
 
   @default_endpoint "https://api.sparkpost.com/api/v1/"
 
-  defmodule Response do
-    defstruct status_code: nil, results: nil
-  end
-
-  defmodule Error do
-    defstruct status_code: nil, errors: nil, results: nil
-  end
-
   @doc """
   Make a request to the SparkPost API.
 
@@ -87,15 +79,12 @@ defmodule SparkPost.Endpoint do
   end
 
   defp encode_request_body(body) do
-    {:ok, req} = body |> Washup.filter |> Poison.encode
-    # IO.puts req
-    req
+    body |> Washup.filter |> Poison.encode!
   end
 
   defp decode_response_body(body) do
     # TODO: [key: :atoms] is unsafe for open-ended structures such as
     # metadata and substitution_data
-    {:ok, resp} = body |> Poison.decode([keys: :atoms])
-    resp
+    body |> Poison.decode!([keys: :atoms])
   end
 end

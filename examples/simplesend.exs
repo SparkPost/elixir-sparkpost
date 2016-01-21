@@ -1,5 +1,5 @@
 to = "you@there.com"
-from = "me@here.com"
+from = "Elixir SparkPost <elixir@sparkpostbox.com>"
 SparkPost.send(
   to: to,
   from: from,
