@@ -16,28 +16,28 @@ Capabilities include:
 
   1. Add sparkpost and ibrowse to your list of dependencies in `mix.exs`:
 
-```elixir
-def deps do
-  [
-    {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
-    {:sparkpost, "~> 0.1.0"}
-  ]
-end
-```
+  ```elixir
+  def deps do
+    [
+      {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
+      {:sparkpost, "~> 0.1.0"}
+    ]
+  end
+  ```
 
   2. Ensure sparkpost is started before your application:
 
-```elixir
-def application do
-  [applications: [:sparkpost]]
-end
-```
+  ```elixir
+  def application do
+    [applications: [:sparkpost]]
+  end
+  ```
 
   3. Update your dependencies:
 
-```bash
-$ mix deps.get
-```
+  ```bash
+  $ mix deps.get
+  ```
 
 ## Usage
 
