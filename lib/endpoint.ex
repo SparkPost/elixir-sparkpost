@@ -10,11 +10,19 @@ defmodule SparkPost.Endpoint do
   Make a request to the SparkPost API.
 
   ## Parameters
-    - method: HTTP request method as atom (:get, :post, ...)
-    - endpoint: SparkPost API endpoint as string ("transmissions", "templates", ...)
-    - options: keyword of optional elements including:
-      - :params: keyword of query parameters
-      - :body: request body (string)
+    - `method`: HTTP 1.1 request method as an atom:
+      - `:delete`
+      - `:get`
+      - `:head`
+      - `:options`
+      - `:patch` 
+      - `:post`
+      - `:put`
+    - `endpoint`: SparkPost API endpoint as string ("transmissions", "templates", ...)
+    - `body`: A Map that will be encoded to JSON to be sent as the body of the request (defaults to empty)
+    - `headers`: A Map of headers of the form %{"Header-Name" => "Value"} to be sent with the request
+    - `options`: A Keyword list of optional elements including:
+      - `:params`: A Keyword list of query parameters
 
   ## Example
     List transmissions for the "ElixirRox" campaign:
@@ -24,34 +32,24 @@ defmodule SparkPost.Endpoint do
           "id" => "102258558346809186", "name" => "102258558346809186",
           "state" => "Success"}, ...], status_code: 200}
   """
-  def request(method, endpoint, options) do
-    url = if Keyword.has_key?(options, :params) do
-      Application.get_env(:sparkpost, :api_endpoint, @default_endpoint) <> endpoint
-        <> "?" <> URI.encode_query(options[:params])
-    else
-      Application.get_env(:sparkpost, :api_endpoint, @default_endpoint) <> endpoint
-    end
+  def request(method, endpoint, body \\ %{},  headers \\ %{}, options \\ []) do
+    url = Application.get_env(:sparkpost, :api_endpoint, @default_endpoint) <> endpoint
 
-    reqopts = if method in [:get, :delete] do
-      [ headers: base_request_headers() ]
-    else
-      [
-        headers: ["Content-Type": "application/json"] ++ base_request_headers(),
-        body: encode_request_body(options[:body])
-      ]
-    end
+    {:ok, request_body} = encode_request_body(body)
+    
+    request_headers = if method in [:get, :delete] do
+        headers 
+      else
+        Map.merge(headers, %{"Content-Type": "application/json"})
+      end
+      |> Map.merge(base_request_headers)
 
-    reqopts = [timeout: Application.get_env(:sparkpost, :http_timeout, 5000)] ++ reqopts
+    timeout = Application.get_env(:sparkpost, :http_timeout, 5000)
 
-    %{status_code: status_code, body: json} = HTTPotion.request(method, url, reqopts)
+    request_options = Keyword.put(options, :timeout, timeout)
 
-    body = decode_response_body(json)
-
-    if Map.has_key?(body, :errors) do
-      %SparkPost.Endpoint.Error{ status_code: status_code, errors: body.errors }
-    else
-      %SparkPost.Endpoint.Response{ status_code: status_code, results: body.results }
-    end
+    HTTPoison.request(method, url, request_body, request_headers, request_options)
+    |> handle_response
   end
 
   def marshal_response(response, struct_type, subkey\\nil)
@@ -72,16 +70,32 @@ defmodule SparkPost.Endpoint do
     response
   end
 
-  defp base_request_headers() do
-    {:ok, version} = :application.get_key(:sparkpost, :vsn)
-    [
-      "User-Agent": "elixir-sparkpost/" <> to_string(version),
-      "Authorization": Application.get_env(:sparkpost, :api_key)
-    ]
+  defp handle_response({:ok, %HTTPoison.Response{status_code: code, body: body}}) when code >= 200 and code < 300 do
+    decoded_body = decode_response_body(body)
+    %SparkPost.Endpoint.Response{status_code: 200, results: decoded_body.results}
   end
 
+  defp handle_response({:ok, %HTTPoison.Response{status_code: code, body: body}}) when code >= 400 do
+    decoded_body = decode_response_body(body)
+    if Map.has_key?(decoded_body, :errors) do
+      %SparkPost.Endpoint.Error{status_code: code, errors: decoded_body.errors}
+    else
+      %SparkPost.Endpoint.Error{status_code: code, errors: []}
+    end
+  end
+
+  defp base_request_headers() do
+    {:ok, version} = :application.get_key(:sparkpost, :vsn)
+    %{
+      "User-Agent": "elixir-sparkpost/" <> to_string(version),
+      "Authorization": Application.get_env(:sparkpost, :api_key)
+    }
+  end
+
+  # Do not try to remove nils from an empty map 
+  defp encode_request_body(body) when is_map(body) and map_size(body) == 0, do: {:ok, ""}
   defp encode_request_body(body) do
-    body |> Washup.filter |> Poison.encode!
+    body |> Washup.filter |> Poison.encode
   end
 
   defp decode_response_body(body) do

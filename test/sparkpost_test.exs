@@ -6,7 +6,7 @@ defmodule SparkPostTest do
   import Mock
 
   test "send succeeds with a Transmission.Response" do
-    with_mock HTTPotion, [request: MockServer.mk_resp] do
+    with_mock HTTPoison, [request: MockServer.mk_resp] do
       resp = SparkPost.send(
         to: "you@there.com",
         from: "me@here.com",
@@ -19,7 +19,7 @@ defmodule SparkPostTest do
   end
 
   test "send fails with a Endpoint.Error" do
-    with_mock HTTPotion, [request: MockServer.mk_fail] do
+    with_mock HTTPoison, [request: MockServer.mk_fail] do
       resp = SparkPost.send(
         to: "you@there.com",
         from: "me@here.com",
@@ -37,8 +37,8 @@ defmodule SparkPostTest do
     subject = "Elixir and SparkPost..."
     text = "Raw text email is boring"
     html = "<marquee>Rich text email is terrifying</marquee>"
-    with_mock HTTPotion, [request: fn (method, url, opts) ->
-      inreq = Poison.decode!(opts[:body], [keys: :atoms])
+    with_mock HTTPoison, [request: fn (method, url, body, headers, opts) ->
+      inreq = Poison.decode!(body, [keys: :atoms])
       assert Recipient.to_recipient_list(inreq.recipients) == Recipient.to_recipient_list(to)
       assert Content.to_content(inreq.content) == %Content.Inline{
         from: Address.to_address(from),
@@ -46,7 +46,7 @@ defmodule SparkPostTest do
         text: text,
         html: html
       }
-      MockServer.mk_resp.(method, url, opts)
+      MockServer.mk_resp.(method, url, body, headers, opts)
     end] do
       SparkPost.send(
         to: to,

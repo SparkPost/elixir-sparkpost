@@ -20,13 +20,12 @@ defmodule SparkPost.Mixfile do
   end
 
   def application do
-    [applications: [:httpotion]]
+    [applications: [:httpoison]]
   end
 
   defp deps do
     [
-      {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
-      {:httpotion, "~> 2.1.0"},
+      {:httpoison, "~> 0.8.1"},
       {:poison, "~> 1.5"},
       {:mock, "~> 0.1.1", only: :test},
       {:excoveralls, "~> 0.4", only: :test},

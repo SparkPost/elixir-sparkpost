@@ -126,7 +126,7 @@ defmodule SparkPost.Transmission do
       recipients: Recipient.to_recipient_list(body.recipients),
       content: Content.to_content(body.content)
     }
-    response = Endpoint.request(:post, "transmissions", [body: body])
+    response = Endpoint.request(:post, "transmissions", body)
     Endpoint.marshal_response(response, Transmission.Response)
   end
 
@@ -150,7 +150,7 @@ defmodule SparkPost.Transmission do
              substitution_data: ""}
   """
   def get(transid) do
-    response = Endpoint.request(:get, "transmissions/" <> transid, [])
+    response = Endpoint.request(:get, "transmissions/" <> transid)
     Endpoint.marshal_response(response, __MODULE__, :transmission)
   end
 
@@ -179,7 +179,7 @@ defmodule SparkPost.Transmission do
         return_path: :required, state: "Success", substitution_data: nil}]
   """
   def list(filters\\[]) do
-    response = Endpoint.request(:get, "transmissions", [params: filters])
+    response = Endpoint.request(:get, "transmissions", %{}, %{}, [params: filters])
     case response do
       %Endpoint.Response{} ->
         Enum.map(response.results, fn (trans) -> struct(__MODULE__, trans) end)
