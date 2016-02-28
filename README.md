@@ -4,7 +4,7 @@
 
 # SparkPost Elixir Library
 
-[![Travis CI](https://travis-ci.org/SparkPost/elixir-sparkpost.svg?branch=master)](https://travis-ci.org/SparkPost/elixir-sparkpost) [![Coverage Status](https://coveralls.io/repos/SparkPost/elixir-sparkpost/badge.svg?branch=master&service=github)](https://coveralls.io/github/SparkPost/elixir-sparkpost?branch=master)
+[![Travis CI](https://travis-ci.org/SparkPost/elixir-sparkpost.svg?branch=master)](https://travis-ci.org/SparkPost/elixir-sparkpost) [![Coverage Status](https://coveralls.io/repos/SparkPost/elixir-sparkpost/badge.svg?branch=master&service=github)](https://coveralls.io/github/SparkPost/elixir-sparkpost?branch=master) [![Slack Status](http://slack.sparkpost.com/badge.svg)](http://slack.sparkpost.com)
 
 The official [Elixir](http://elixir-lang.org/) package for the [SparkPost API](https://www.sparkpost.com/api).
 
