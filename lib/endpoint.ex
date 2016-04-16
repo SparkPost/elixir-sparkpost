@@ -79,8 +79,6 @@ defmodule SparkPost.Endpoint do
     decoded_body = decode_response_body(body)
     if Map.has_key?(decoded_body, :errors) do
       %SparkPost.Endpoint.Error{status_code: code, errors: decoded_body.errors}
-    else
-      %SparkPost.Endpoint.Error{status_code: code, errors: []}
     end
   end
 
