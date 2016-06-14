@@ -41,6 +41,8 @@ defmodule SparkPost.Endpoint do
       ]
     end
 
+    reqopts = [timeout: Application.get_env(:sparkpost, :http_timeout, 5000)] ++ reqopts
+
     %{status_code: status_code, body: json} = HTTPotion.request(method, url, reqopts)
 
     body = decode_response_body(json)
