@@ -25,7 +25,7 @@ defmodule SparkPost.Mixfile do
 
   defp deps do
     [
-      {:httpoison, "~> 0.8.1"},
+      {:httpoison, "~> 0.9"},
       {:poison, "~> 1.5"},
       {:mock, "~> 0.1.1", only: :test},
       {:excoveralls, "~> 0.4", only: :test},
