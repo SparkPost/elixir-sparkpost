@@ -34,6 +34,6 @@ defmodule SparkPost.MockServer do
   end
 
   def mk_http_resp(status_code, body) do
-    fn (_method, _url, _opts) -> %{status_code: status_code, body: body} end
+    fn (_method, _url, _body, _headers, _opts) -> {:ok, %HTTPoison.Response{status_code: status_code, body: body}} end
   end
 end

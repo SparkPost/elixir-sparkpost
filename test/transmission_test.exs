@@ -50,7 +50,7 @@ defmodule SparkPost.TransmissionTest do
 
   defmodule TestRequests do
     def test_send(req, test_fn) do
-      with_mock HTTPotion, [
+      with_mock HTTPoison, [
         request: handle_send(test_fn)
       ] do
         Transmission.send(req)
@@ -58,8 +58,8 @@ defmodule SparkPost.TransmissionTest do
     end
 
     defp handle_send(response_test_fn) do
-      fn (method, url, opts) ->
-        req = Poison.decode!(opts[:body], [keys: :atoms])
+      fn (method, url, body, headers, opts) ->
+        req = Poison.decode!(body, [keys: :atoms])
         fullreq = struct(Transmission, %{
           req |
           options: struct(Transmission.Options, req.options),
@@ -67,12 +67,12 @@ defmodule SparkPost.TransmissionTest do
           content: Content.to_content(req.content)
         })
         response_test_fn.(fullreq)
-        MockServer.mk_resp.(method, url, opts)
+        MockServer.mk_resp.(method, url, body, headers, opts)
       end
     end
 
     defp parse_recipients_field(lst) when is_list(lst) do
-      Enum.map(lst, fn recip -> 
+      Enum.map(lst, fn recip ->
         struct(Recipient, parse_recipient(recip))
       end)
     end
@@ -95,14 +95,14 @@ defmodule SparkPost.TransmissionTest do
   end
 
   test "Transmission.send succeeds with Transmission.Response" do
-    with_mock HTTPotion, [request: MockServer.mk_resp] do
+    with_mock HTTPoison, [request: MockServer.mk_resp] do
       resp = Transmission.send(TestStructs.basic_transmission)
       assert %Transmission.Response{} = resp
     end
   end
 
   test "Transmission.send fails with Endpoint.Error" do
-    with_mock HTTPotion, [request: MockServer.mk_fail] do
+    with_mock HTTPoison, [request: MockServer.mk_fail] do
       req = TestStructs.basic_transmission
       resp = Transmission.send(req)
       assert %SparkPost.Endpoint.Error{} = resp
@@ -110,9 +110,9 @@ defmodule SparkPost.TransmissionTest do
   end
 
   test "Transmission.send emits a POST" do
-    with_mock HTTPotion, [request: fn (method, url, opts) ->
+    with_mock HTTPoison, [request: fn (method, url, body, headers, opts) ->
       assert method == :post
-      MockServer.mk_resp.(method, url, opts)
+      MockServer.mk_resp.(method, url, body, headers, opts)
     end] do
       Transmission.send(TestStructs.basic_transmission)
     end
@@ -240,7 +240,7 @@ defmodule SparkPost.TransmissionTest do
   end
 
   test "Transmission.list succeeds with a list of Transmission" do
-    with_mock HTTPotion, [request: MockServer.mk_list] do
+    with_mock HTTPoison, [request: MockServer.mk_list] do
       resp = Transmission.list
       assert is_list(resp)
       Enum.each(resp, fn r -> assert %Transmission{} = r end)
@@ -248,16 +248,16 @@ defmodule SparkPost.TransmissionTest do
   end
 
   test "Transmission.list fails with Endpoint.Error" do
-    with_mock HTTPotion, [request: MockServer.mk_fail] do
+    with_mock HTTPoison, [request: MockServer.mk_fail] do
       resp = Transmission.list
       assert %SparkPost.Endpoint.Error{} = resp
     end
   end
 
   test "Transmission.list emits a GET" do
-    with_mock HTTPotion, [request: fn (method, url, opts) ->
+    with_mock HTTPoison, [request: fn (method, url, body, headers, opts) ->
       assert method == :get
-      MockServer.mk_list.(method, url, opts)
+      MockServer.mk_list.(method, url, body, headers, opts)
     end] do
       Transmission.list
     end
@@ -267,9 +267,9 @@ defmodule SparkPost.TransmissionTest do
   end
 
   test "Transmission.get emits a GET" do
-    with_mock HTTPotion, [request: fn (method, url, opts) ->
+    with_mock HTTPoison, [request: fn (method, url, body, headers, opts) ->
       assert method == :get
-      MockServer.mk_get.(method, url, opts)
+      MockServer.mk_get.(method, url, body, headers, opts)
     end] do
       Transmission.get("TRANSMISSION_ID")
     end

@@ -10,6 +10,8 @@ defmodule Washup do
       iex> jenny = %{name: "Jennifer", age: 27, rank: "Captain", pets: nil}
       iex> Washup.filter(jenny)
       %{name: "Jennifer", age: 27, rank: "Captain"}
+      iex> Washup.filter("Plain String")
+      "Plain String" 
   """
   def filter(it) do
     cond do

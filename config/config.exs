@@ -2,9 +2,10 @@
 # and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
 
-  config :sparkpost, api_endpoint: "https://api.sparkpost.com/api/v1/"
-  config :sparkpost, api_key: "YOUR API KEY HERE"
-  config :sparkpost, http_timeout: 5000
+config :sparkpost,
+  api_endpoint: "https://api.sparkpost.com/api/v1/",
+  api_key: "YOUR API KEY HERE",
+  http_timeout: 5000
 
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this
