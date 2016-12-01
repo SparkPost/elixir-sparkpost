@@ -5,7 +5,8 @@ use Mix.Config
 config :sparkpost,
   api_endpoint: "https://api.sparkpost.com/api/v1/",
   api_key: "YOUR API KEY HERE",
-  http_timeout: 5000
+  http_timeout: 5000,
+  http_conn_timeout: 8000
 
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this
