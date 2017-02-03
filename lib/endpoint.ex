@@ -45,8 +45,8 @@ defmodule SparkPost.Endpoint do
       |> Map.merge(base_request_headers)
 
     request_options = options
-    |> Keyword.put(:timeout, Application.get_env(:sparkpost, :http_conn_timeout, 8000))
-    |> Keyword.put(:recv_timeout, Application.get_env(:sparkpost, :http_timeout, 5000))
+    |> Keyword.put(:timeout, Application.get_env(:sparkpost, :http_timeout, 30000))
+    |> Keyword.put(:recv_timeout, Application.get_env(:sparkpost, :http_recv_timeout, 8000))
 
     HTTPoison.request(method, url, request_body, request_headers, request_options)
     |> handle_response
