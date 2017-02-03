@@ -72,7 +72,6 @@ defmodule MyApp.Example do
 	def send_message do
     Transmission.send(%Transmission{
         recipients: [ "you@example.com" ],
-        return_path: "elixir@sparkpostbox.com",
         content: %Content.Inline{
           subject: "Sending email from Elixir is awesome!",
           from: "elixir@sparkpostbox.com", 

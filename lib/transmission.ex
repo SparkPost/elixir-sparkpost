@@ -43,7 +43,7 @@ defmodule SparkPost.Transmission do
 
   defstruct options: %SparkPost.Transmission.Options{},
     campaign_id: nil,
-    return_path: :required,
+    return_path: nil,
     metadata: nil,
     substitution_data: nil,
     recipients: :required,
@@ -70,7 +70,7 @@ defmodule SparkPost.Transmission do
     - content: %SparkPost.Content.Inline{}, %SparkPost.Content.Raw{} or %SparkPost.Content.TemplateRef{}
     - options: %SparkPost.Transmission.Options{}
     - campaign_id: campaign identifier (string)
-    - return_path: envelope FROM address (email address string)
+    - return_path: envelope FROM address, available in Enterprise only (email address string)
     - metadata: transmission-level metadata k/v pairs (keyword)
     - substitution_data: transmission-level substitution_data k/v pairs (keyword)
 
@@ -80,7 +80,6 @@ defmodule SparkPost.Transmission do
       alias SparkPost.{Content, Transmission}
       Transmission.send(%Transmission{
         recipients: ["to@you.com"],
-        return_path: "from@me.com",
         content: %Content.Inline{
           from: "from@me.com", 
           subject: subject,
@@ -96,7 +95,6 @@ defmodule SparkPost.Transmission do
       Transmission.send(
         %Transmission{
           recipients: ["to@you.com", "to@youtoo.com"],
-          return_path: "from@me.com",
           content: %Content.TemplateRef{ template_id: "test-template-1" }
         }
       )
@@ -108,7 +106,6 @@ defmodule SparkPost.Transmission do
     Transmission.send(
       %Transmission{
         recipients: ["to@you.com"],
-        return_path: "from@me.com",
         content: %Content.Inline{
           subject: "Now with attachments!",
           text: "There is an attachment with this message",
@@ -146,7 +143,7 @@ defmodule SparkPost.Transmission do
              metadata: "", num_failed_gen: 0, num_generated: 2, num_rcpts: 2,
              options: %{click_tracking: true, conversion_tracking: "", open_tracking: true},
              rcp_list_total_chunks: nil, rcpt_list_chunk_size: 100, recipients: :required,
-             return_path: "ewan.dennis@cloudygoo.com", state: "Success",
+             return_path: nil, state: "Success",
              substitution_data: ""}
   """
   def get(transid) do
@@ -170,13 +167,13 @@ defmodule SparkPost.Transmission do
         id: "102258558346809186", metadata: nil, num_failed_gen: nil,
         num_generated: nil, num_rcpts: nil, options: :required,
         rcp_list_total_chunks: nil, rcpt_list_chunk_size: nil, recipients: :required,
-        return_path: :required, state: "Success", substitution_data: nil},
+        return_path: :nil, state: "Success", substitution_data: nil},
        %Transmission{campaign_id: "", content: %{template_id: "inline"},
         description: "", generation_end_time: nil, generation_start_time: nil,
         id: "48215348926834924", metadata: nil, num_failed_gen: nil,
         num_generated: nil, num_rcpts: nil, options: :required,
         rcp_list_total_chunks: nil, rcpt_list_chunk_size: nil, recipients: :required,
-        return_path: :required, state: "Success", substitution_data: nil}]
+        return_path: :nil, state: "Success", substitution_data: nil}]
   """
   def list(filters\\[]) do
     response = Endpoint.request(:get, "transmissions", %{}, %{}, [params: filters])
