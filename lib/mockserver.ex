@@ -18,19 +18,19 @@ defmodule SparkPost.MockServer do
   end
 
   def mk_resp do
-    SparkPost.MockServer.mk_http_resp(200, create_json)
+    SparkPost.MockServer.mk_http_resp(200, create_json())
   end
 
   def mk_fail do
-    SparkPost.MockServer.mk_http_resp(400, create_fail_json)
+    SparkPost.MockServer.mk_http_resp(400, create_fail_json())
   end
 
   def mk_list do
-    SparkPost.MockServer.mk_http_resp(200, list_json)
+    SparkPost.MockServer.mk_http_resp(200, list_json())
   end
 
   def mk_get do
-    SparkPost.MockServer.mk_http_resp(200, get_json)
+    SparkPost.MockServer.mk_http_resp(200, get_json())
   end
 
   def mk_http_resp(status_code, body) do
