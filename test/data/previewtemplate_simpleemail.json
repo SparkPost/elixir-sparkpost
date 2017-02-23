@@ -1,0 +1,12 @@
+{
+    "results": {
+        "from": "marketing@bounces.company.example",
+        "subject": "Summer deals for Natalie",
+        "reply_to": "Summer deals <summer_deals@company.example>",
+        "text": "Check out these deals Natalie!",
+        "html": "<b>Check out these deals Natalie!</b>",
+        "headers": {
+            "X-Customer-Campaign-ID": "Summer2014"
+        }
+    }
+}
