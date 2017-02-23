@@ -17,7 +17,7 @@ defmodule SparkPost.Template do
     -headers
   """
 
-  alias SparkPost.{Endpoint, Template}
+  alias SparkPost.Endpoint
 
   @doc """
   Generate a preview of an existing template.
@@ -41,7 +41,7 @@ defmodule SparkPost.Template do
     body = %{substitution_data: substitution_data}
     :post
     |> Endpoint.request("/templates/#{template.template_id}/preview#{qs}", body)
-    |> Endpoint.marshal_response(Template.ContentResponse)
-    |> Template.ContentResponse.convert_from_field
+    |> Endpoint.marshal_response(SparkPost.Content.Inline)
+    |> SparkPost.Content.Inline.convert_from_field
   end
 end

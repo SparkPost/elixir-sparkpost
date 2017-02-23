@@ -1,9 +1,8 @@
 defmodule SparkPost.TemplateTest do
   use ExUnit.Case, async: false
 
-  alias SparkPost.Content.TemplateRef
+  alias SparkPost.Content.{TemplateRef, Inline}
   alias SparkPost.{Endpoint, MockServer, Template}
-  alias SparkPost.Template.ContentResponse
 
   import Mock
 
@@ -24,7 +23,7 @@ defmodule SparkPost.TemplateTest do
     end
   end
 
-  test_with_mock "Template.preview succeeds with Template.ContentResponse",
+  test_with_mock "Template.preview succeeds with Content.Inline",
     HTTPoison, [request: fn (method, url, body, headers, opts) ->
       assert method == :post
       # draft not set
@@ -33,10 +32,10 @@ defmodule SparkPost.TemplateTest do
       fun.(method, url, body, headers, opts)
     end] do
       resp = Template.preview(TestStruct.basic_template(), TestStruct.substitution_data())
-      assert %ContentResponse{} = resp
+      assert %Inline{} = resp
   end
 
-  test_with_mock "Template.preview succeeds with Template.ContentResponse and draft set",
+  test_with_mock "Template.preview succeeds with Content.Inline and draft set",
     HTTPoison, [request: fn (method, url, body, headers, opts) ->
       assert method == :post
       assert String.ends_with?(url, "preview?draft=true")
@@ -44,7 +43,7 @@ defmodule SparkPost.TemplateTest do
       fun.(method, url, body, headers, opts)
     end] do
       resp = Template.preview(TestStruct.template_with_draft(), TestStruct.substitution_data())
-      assert %ContentResponse{} = resp
+      assert %Inline{} = resp
   end
 
   test_with_mock "Template.preview fails with Endpoint.Error", HTTPoison,
