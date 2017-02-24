@@ -42,8 +42,8 @@ defmodule SparkPost.TransmissionTest do
     def basic_transmission do
       skeleton(
         options: %Transmission.Options{},
-        recipients: [full_addr_recipient],
-        content: inline_content
+        recipients: [full_addr_recipient()],
+        content: inline_content()
       )
     end
   end

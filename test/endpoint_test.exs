@@ -9,8 +9,8 @@ defmodule SparkPost.EndpointTest do
   defmodule Headers do
     def for_method(method) do
       cond do
-        method in [:post, :put] -> Map.merge(for_body_requests, core)
-        true -> core
+        method in [:post, :put] -> Map.merge(for_body_requests(), core())
+        true -> core()
       end
     end
 

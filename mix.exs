@@ -9,8 +9,8 @@ defmodule SparkPost.Mixfile do
      start_permanent: Mix.env == :prod,
      source_url: "https://github.com/SparkPost/elixir-sparkpost",
      description: "The official Elixir package for the SparkPost API",
-     package: package,
-     deps: deps,
+     package: package(),
+     deps: deps(),
      docs: [
        extras: ["README.md", "CONTRIBUTING.md", "CHANGELOG.md"]
      ],

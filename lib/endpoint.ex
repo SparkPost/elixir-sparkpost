@@ -42,7 +42,7 @@ defmodule SparkPost.Endpoint do
       else
         Map.merge(headers, %{"Content-Type": "application/json"})
       end
-      |> Map.merge(base_request_headers)
+      |> Map.merge(base_request_headers())
 
     request_options = options
     |> Keyword.put(:timeout, Application.get_env(:sparkpost, :http_timeout, 30000))
