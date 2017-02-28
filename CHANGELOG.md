@@ -1,6 +1,6 @@
 ## Change Log
 
-## v0.3.1 (2017/02/28)
+## v0.4.0 (2017/02/28)
 - Template preview support contributed by @asgoel - Thanks!
 
 ## v0.3.0 (2017/02/03)
