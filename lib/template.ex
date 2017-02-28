@@ -7,14 +7,14 @@ defmodule SparkPost.Template do
   or use the [SparkPost API reference](https://developers.sparkpost.com/api/templates.html) for details.
 
   Returned by `SparkPost.template.preview/2`.
-    -from
-      -email
-      -name
-    -subject
-    -reply_to
-    -text
-    -html
-    -headers
+    - from
+      - email
+      - name
+    - subject
+    - reply_to
+    - text
+    - html
+    - headers
   """
 
   alias SparkPost.Endpoint
