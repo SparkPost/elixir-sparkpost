@@ -1,5 +1,8 @@
 ## Change Log
 
+## v0.3.1 (2017/02/28)
+- Template preview support contributed by @asgoel - Thanks!
+
 ## v0.3.0 (2017/02/03)
 - Made Transmission.options.return_path optional. It's only useful for Enterprise customers.
 - Added a `:http_recv_timeout` config param (thanks davidefedrigo)
