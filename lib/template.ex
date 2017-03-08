@@ -40,7 +40,7 @@ defmodule SparkPost.Template do
     end
     body = %{substitution_data: substitution_data}
     :post
-    |> Endpoint.request("/templates/#{template.template_id}/preview#{qs}", body)
+    |> Endpoint.request("templates/#{template.template_id}/preview#{qs}", body)
     |> Endpoint.marshal_response(SparkPost.Content.Inline)
     |> SparkPost.Content.Inline.convert_from_field
   end
