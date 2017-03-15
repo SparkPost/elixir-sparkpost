@@ -29,7 +29,11 @@ defmodule SparkPost.SuppressionList do
    - description: Description of entries to include in the search.
   """
   def search(params \\ []) do
-    response = Endpoint.request(:get, "suppression-list", %{}, %{}, [params: params])
-    struct(SparkPost.SuppressionList.SearchResult, response)
+    response = Endpoint.request(:get, "suppression-list", %{}, %{}, [params: params], false)
+    case response do
+      %SparkPost.Endpoint.Response{results: body} ->
+        struct(SparkPost.SuppressionList.SearchResult, body)
+      _ -> response
+    end
   end
 end
