@@ -9,5 +9,7 @@ defmodule SparkPost.SuppressionList.SearchResult do
    - total_count: Total number of results across all pages based on the query params.
   """
 
-  defstruct results: :required, links: :required, total_count: :required
+  defstruct results: :required,
+    links: :required,
+    total_count: :required
 end

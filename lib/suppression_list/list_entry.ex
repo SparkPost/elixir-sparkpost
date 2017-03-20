@@ -14,5 +14,7 @@ defmodule SparkPost.SuppressionList.ListEntry do
   defstruct recipient: :required,
     type: :required,
     source: nil,
-    description: nil
+    description: nil,
+    transactional: nil,
+    non_transactional: nil
 end

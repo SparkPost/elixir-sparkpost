@@ -1,12 +1,12 @@
 defmodule SparkPost.SuppressionList do
   @moduledoc """
   The SparkPost Suppression List API for working with suppression lists.
-  Use `SparkPost.SupressionList.search/1` to search through your account's suppression list.
+  Use `SparkPost.SuppressionList.search/1` to search through your account's suppression list.
 
   Check out the documentation for each function
   or use the [SparkPost API reference](https://developers.sparkpost.com/api/suppression_list.html) for details.
 
-  Returned by `SparkPost.SupressionList.search/1`.
+  Returned by `SparkPost.SuppressionList.search/1`.
     - %SparkPost.SuppressionList.SearchResult{}
   """
 
@@ -32,7 +32,12 @@ defmodule SparkPost.SuppressionList do
     response = Endpoint.request(:get, "suppression-list", %{}, %{}, [params: params], false)
     case response do
       %SparkPost.Endpoint.Response{results: body} ->
-        struct(SparkPost.SuppressionList.SearchResult, body)
+        mapped_results = Enum.map(body.results, fn res -> struct(SparkPost.SuppressionList.ListEntry, res) end)
+        %SparkPost.SuppressionList.SearchResult{
+          results: mapped_results,
+          links: body.links,
+          total_count: body.total_count
+        }
       _ -> response
     end
   end
