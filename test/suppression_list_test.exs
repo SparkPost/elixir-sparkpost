@@ -8,6 +8,28 @@ defmodule SparkPost.SuppressionListTest do
 
   import Mock
 
+  test_with_mock "SuppressionList.delete succeeds with empty body",
+    HTTPoison, [request: fn (method, url, body, headers, opts) ->
+      assert method == :delete
+      fun = MockServer.mk_http_resp(204, "")
+      fun.(method, url, body, headers, opts)
+    end] do
+      resp = SuppressionList.delete("test@marketing.com")
+      assert resp == ""
+  end
+
+  test_with_mock "SuppressionList.delete fails 404",
+    HTTPoison, [request: fn (method, url, body, headers, opts) ->
+      assert method == :delete
+      fun = MockServer.mk_http_resp(404, MockServer.get_json("suppressiondelete_fail"))
+      fun.(method, url, body, headers, opts)
+    end] do
+      resp = SuppressionList.delete("test@marketing.com")
+      assert %SparkPost.Endpoint.Error{} = resp
+      assert resp.status_code == 404
+      assert resp.errors == [%{message: "Recipient could not be found"}]
+  end
+
   test_with_mock "SuppressionList.search succeeds with SuppressionList.SearchResult",
     HTTPoison, [request: fn (method, url, body, headers, opts) ->
       assert method == :get

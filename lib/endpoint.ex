@@ -36,9 +36,9 @@ defmodule SparkPost.Endpoint do
     url = Application.get_env(:sparkpost, :api_endpoint, @default_endpoint) <> endpoint
 
     {:ok, request_body} = encode_request_body(body)
-    
+
     request_headers = if method in [:get, :delete] do
-        headers 
+        headers
       else
         Map.merge(headers, %{"Content-Type": "application/json"})
       end
@@ -73,9 +73,9 @@ defmodule SparkPost.Endpoint do
   defp handle_response({:ok, %HTTPoison.Response{status_code: code, body: body}}, decode_results) when code >= 200 and code < 300 do
     decoded_body = decode_response_body(body)
     if decode_results do
-      %SparkPost.Endpoint.Response{status_code: 200, results: decoded_body.results}
+      %SparkPost.Endpoint.Response{status_code: code, results: decoded_body.results}
     else
-      %SparkPost.Endpoint.Response{status_code: 200, results: decoded_body}
+      %SparkPost.Endpoint.Response{status_code: code, results: decoded_body}
     end
   end
 
@@ -100,6 +100,7 @@ defmodule SparkPost.Endpoint do
     body |> Washup.filter |> Poison.encode
   end
 
+  defp decode_response_body(body) when byte_size(body) == 0, do: ""
   defp decode_response_body(body) do
     # TODO: [key: :atoms] is unsafe for open-ended structures such as
     # metadata and substitution_data

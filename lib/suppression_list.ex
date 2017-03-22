@@ -1,16 +1,38 @@
 defmodule SparkPost.SuppressionList do
   @moduledoc """
   The SparkPost Suppression List API for working with suppression lists.
-  Use `SparkPost.SuppressionList.search/1` to search through your account's suppression list.
+  Use `SparkPost.SuppressionList.delete/1` to delete a single entry from a list,
+  `SparkPost.SuppressionList.search/1` to search through your account's suppression list.
 
   Check out the documentation for each function
   or use the [SparkPost API reference](https://developers.sparkpost.com/api/suppression_list.html) for details.
+
+  Returned by `SparkPost.SuppressionList.delete/1`:
+    - nothing (empty body)
 
   Returned by `SparkPost.SuppressionList.search/1`.
     - %SparkPost.SuppressionList.SearchResult{}
   """
 
   alias SparkPost.Endpoint
+
+  @doc """
+  Deletes a specific entry from the list. Returns an empty string if
+  the deletion was successful. Returns a %SparkPost.Endpoint.Error{} with a 404
+  if the specified entry is not in the list. Returns a %SparkPost.Endpoint.Error{}
+  with a 403 if the entry could not be removed for any reason (such as Compliance).
+
+  Parameters:
+    recipient: the entry to delete from the suppression list.
+  """
+  def delete(recipient) do
+    response = Endpoint.request(:delete, "suppression-list/#{recipient}", %{}, %{}, [], false)
+    case response do
+      %SparkPost.Endpoint.Response{status_code: 204} ->
+        ""
+      _ -> response
+    end
+  end
 
   @doc """
   Execute a search of the suppression list based on the provided
