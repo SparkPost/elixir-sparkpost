@@ -32,7 +32,7 @@ defmodule SparkPost.Endpoint do
           "id" => "102258558346809186", "name" => "102258558346809186",
           "state" => "Success"}, ...], status_code: 200}
   """
-  def request(method, endpoint, body \\ %{},  headers \\ %{}, options \\ []) do
+  def request(method, endpoint, body \\ %{},  headers \\ %{}, options \\ [], decode_results \\ true) do
     url = Application.get_env(:sparkpost, :api_endpoint, @default_endpoint) <> endpoint
 
     {:ok, request_body} = encode_request_body(body)
@@ -49,7 +49,7 @@ defmodule SparkPost.Endpoint do
     |> Keyword.put(:recv_timeout, Application.get_env(:sparkpost, :http_recv_timeout, 8000))
 
     HTTPoison.request(method, url, request_body, request_headers, request_options)
-    |> handle_response
+    |> handle_response(decode_results)
   end
 
   def marshal_response(response, struct_type, subkey\\nil)
@@ -70,12 +70,16 @@ defmodule SparkPost.Endpoint do
     response
   end
 
-  defp handle_response({:ok, %HTTPoison.Response{status_code: code, body: body}}) when code >= 200 and code < 300 do
+  defp handle_response({:ok, %HTTPoison.Response{status_code: code, body: body}}, decode_results) when code >= 200 and code < 300 do
     decoded_body = decode_response_body(body)
-    %SparkPost.Endpoint.Response{status_code: 200, results: decoded_body.results}
+    if decode_results do
+      %SparkPost.Endpoint.Response{status_code: 200, results: decoded_body.results}
+    else
+      %SparkPost.Endpoint.Response{status_code: 200, results: decoded_body}
+    end
   end
 
-  defp handle_response({:ok, %HTTPoison.Response{status_code: code, body: body}}) when code >= 400 do
+  defp handle_response({:ok, %HTTPoison.Response{status_code: code, body: body}}, _decode_results) when code >= 400 do
     decoded_body = decode_response_body(body)
     if Map.has_key?(decoded_body, :errors) do
       %SparkPost.Endpoint.Error{status_code: code, errors: decoded_body.errors}

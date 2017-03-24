@@ -1,0 +1,10 @@
+{
+    "results": [
+        {
+            "recipient": "test@marketing.com",
+            "type": "non_transactional"
+        }
+    ],
+    "links": [],
+    "total_count": 1
+}
