@@ -8,6 +8,28 @@ defmodule SparkPost.SuppressionListTest do
 
   import Mock
 
+  test_with_mock "SuppressionList.update_one succeeds with message",
+    HTTPoison, [request: fn (method, url, body, headers, opts) ->
+      assert method == :put
+      fun = MockServer.mk_http_resp(200, MockServer.get_json("suppressionlistupdate"))
+      fun.(method, url, body, headers, opts)
+    end] do
+    resp = SuppressionList.update_one("test@marketing.com", "non_transactional", "test description")
+    assert resp == "Test response message"
+  end
+
+  test_with_mock "SuppressionList.update_one fails with invalid type",
+    HTTPoison, [request: fn (method, url, body, headers, opts) ->
+      assert method == :put
+      fun = MockServer.mk_http_resp(400, MockServer.get_json("suppressionupdate_fail"))
+      fun.(method, url, body, headers, opts)
+    end] do
+    resp = SuppressionList.update_one("test@marketing.com", "bad_type")
+    assert %SparkPost.Endpoint.Error{} = resp
+    assert resp.status_code == 400
+    assert resp.errors == [%{message: "Type must be one of: 'transactional', 'non_transactional'"}]
+  end
+
   test_with_mock "SuppressionList.delete succeeds with empty body",
     HTTPoison, [request: fn (method, url, body, headers, opts) ->
       assert method == :delete

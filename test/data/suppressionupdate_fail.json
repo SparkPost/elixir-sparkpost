@@ -1,0 +1,7 @@
+{
+  "errors": [
+    {
+        "message": "Type must be one of: 'transactional', 'non_transactional'"
+    }
+  ]
+}
