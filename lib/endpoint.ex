@@ -86,6 +86,10 @@ defmodule SparkPost.Endpoint do
     end
   end
 
+  defp handle_response({:error, %HTTPoison.Error{reason: reason}}, _decode_results) do
+    %SparkPost.Endpoint.Error{status_code: nil, errors: [reason]}
+  end
+
   defp base_request_headers() do
     {:ok, version} = :application.get_key(:sparkpost, :vsn)
     %{
