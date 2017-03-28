@@ -8,23 +8,23 @@ defmodule SparkPost.SuppressionListTest do
 
   import Mock
 
-  test_with_mock "SuppressionList.update_one succeeds with message",
+  test_with_mock "SuppressionList.upsert_one succeeds with message",
     HTTPoison, [request: fn (method, url, body, headers, opts) ->
       assert method == :put
       fun = MockServer.mk_http_resp(200, MockServer.get_json("suppressionlistupdate"))
       fun.(method, url, body, headers, opts)
     end] do
-    resp = SuppressionList.update_one("test@marketing.com", "non_transactional", "test description")
+    {:ok, resp} = SuppressionList.upsert_one("test@marketing.com", "non_transactional", "test description")
     assert resp == "Test response message"
   end
 
-  test_with_mock "SuppressionList.update_one fails with invalid type",
+  test_with_mock "SuppressionList.upsert_one fails with invalid type",
     HTTPoison, [request: fn (method, url, body, headers, opts) ->
       assert method == :put
       fun = MockServer.mk_http_resp(400, MockServer.get_json("suppressionupdate_fail"))
       fun.(method, url, body, headers, opts)
     end] do
-    resp = SuppressionList.update_one("test@marketing.com", "bad_type")
+    {:error, resp} = SuppressionList.upsert_one("test@marketing.com", "bad_type")
     assert %SparkPost.Endpoint.Error{} = resp
     assert resp.status_code == 400
     assert resp.errors == [%{message: "Type must be one of: 'transactional', 'non_transactional'"}]
@@ -36,7 +36,7 @@ defmodule SparkPost.SuppressionListTest do
       fun = MockServer.mk_http_resp(204, "")
       fun.(method, url, body, headers, opts)
     end] do
-      resp = SuppressionList.delete("test@marketing.com")
+      {:ok, resp} = SuppressionList.delete("test@marketing.com")
       assert resp == ""
   end
 
@@ -46,7 +46,7 @@ defmodule SparkPost.SuppressionListTest do
       fun = MockServer.mk_http_resp(404, MockServer.get_json("suppressiondelete_fail"))
       fun.(method, url, body, headers, opts)
     end] do
-      resp = SuppressionList.delete("test@marketing.com")
+      {:error, resp} = SuppressionList.delete("test@marketing.com")
       assert %SparkPost.Endpoint.Error{} = resp
       assert resp.status_code == 404
       assert resp.errors == [%{message: "Recipient could not be found"}]

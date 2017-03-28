@@ -2,17 +2,17 @@ defmodule SparkPost.SuppressionList do
   @moduledoc """
   The SparkPost Suppression List API for working with suppression lists.
   Use `SparkPost.SuppressionList.delete/1` to delete a single entry from a list,
-  `SparkPost.SuppressionList.update_one/3` to insert or update a single list entry,
+  `SparkPost.SuppressionList.upsert_one/3` to insert or update a single list entry,
   or `SparkPost.SuppressionList.search/1` to search through your account's suppression list.
 
   Check out the documentation for each function
   or use the [SparkPost API reference](https://developers.sparkpost.com/api/suppression_list.html) for details.
 
   Returned by `SparkPost.SuppressionList.delete/1`:
-    - nothing (empty body)
+    - {:ok, ""}
 
-  Returned by `SparkPost.SuppressionList.update_one/3`:
-    - message (A success message string)
+  Returned by `SparkPost.SuppressionList.upsert_one/3`:
+    - {:ok, message} (A success message string)
 
   Returned by `SparkPost.SuppressionList.search/1`.
     - %SparkPost.SuppressionList.SearchResult{}
@@ -24,14 +24,14 @@ defmodule SparkPost.SuppressionList do
   Insert or update a single entry in the suppression list.
   Returns a single string with the success message if the entry
   was updated or inserted. Returns a %SparkPost.Endpoint.Error{} with a 400
-  if the type is invalid.
+  if there was an issue with the request format.
 
   Parameters:
     - recipient: the email to insert or update in the suppression list
     - type: one of "transactional" or "non_transactional"
     - description (optional): optional description of this entry in the suppression list
   """
-  def update_one(recipient, type, description \\ nil) do
+  def upsert_one(recipient, type, description \\ nil) do
     body = if description == nil do
       %{type: type}
     else
@@ -40,8 +40,8 @@ defmodule SparkPost.SuppressionList do
     response = Endpoint.request(:put, "suppression-list/#{recipient}", body)
     case response do
       %SparkPost.Endpoint.Response{status_code: 200, results: results} ->
-        Map.get(results, :message, "")
-      _ -> response
+        {:ok, Map.get(results, :message, "")}
+      _ -> {:error, response}
     end
   end
 
@@ -58,8 +58,8 @@ defmodule SparkPost.SuppressionList do
     response = Endpoint.request(:delete, "suppression-list/#{recipient}", %{}, %{}, [], false)
     case response do
       %SparkPost.Endpoint.Response{status_code: 204} ->
-        ""
-      _ -> response
+        {:ok, ""}
+      _ -> {:error, response}
     end
   end
 
