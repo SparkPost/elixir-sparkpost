@@ -102,4 +102,14 @@ defmodule SparkPost.EndpointTest do
       Endpoint.request(:get, "transmissions", %{}, %{}, [])
     end
   end
+
+  test_with_mock "Endpoint request can handle httpoison timeouts", HTTPoison,
+  [request: fn (method, url, body, headers, opts) ->
+      fun = MockServer.mk_error(:timeout)
+      fun.(method, url, body, headers, opts)
+    end
+    ] do
+      assert %Endpoint.Error{errors: [:timeout], status_code: nil, results: nil} ==
+        Endpoint.request(:post, "transmissions", %{}, %{}, [])
+  end
 end
