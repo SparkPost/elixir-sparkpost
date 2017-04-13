@@ -1,7 +1,7 @@
 defmodule SparkPost.Transmission do
   @moduledoc """
   The SparkPost Transmission API endpoint for sending email. Use `SparkPost.Transmission.send/1` to
-  send messages, SparkPost.Transmission.list/1 to list previous sends and SparkPost.Transmission.get/1 to
+  send messages, `SparkPost.Transmission.list/1` to list previous sends and `SparkPost.Transmission.get/1` to
   retrieve details on a given transmission.
 
   Check out the documentation for each function

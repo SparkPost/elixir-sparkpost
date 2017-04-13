@@ -1,5 +1,11 @@
 ## Change Log
 
+## v0.5.0 (2017/04/13)
+- This release brought to you by the tireless @asgoel
+- Core suppression list support
+- Poison dependency relaxed to ~> 3.0
+- Fixed an issue caused by a double slash in API URL
+
 ## v0.4.0 (2017/02/28)
 - Template preview support contributed by @asgoel - Thanks!
 

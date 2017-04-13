@@ -20,7 +20,7 @@ Capabilities include:
   def deps do
     [
       {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
-      {:sparkpost, "~> 0.3.0"}
+      {:sparkpost, "~> 0.5.0"}
     ]
   end
   ```
