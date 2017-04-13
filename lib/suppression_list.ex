@@ -9,7 +9,7 @@ defmodule SparkPost.SuppressionList do
   or use the [SparkPost API reference](https://developers.sparkpost.com/api/suppression_list.html) for details.
 
   Returned by `SparkPost.SuppressionList.delete/1`:
-    - {:ok, ""}
+    - \\{:ok, ""}
 
   Returned by `SparkPost.SuppressionList.upsert_one/3`:
     - {:ok, message} (A success message string)
