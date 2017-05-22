@@ -3,7 +3,7 @@ defmodule SparkPost.Mixfile do
 
   def project do
     [app: :sparkpost,
-     version: "0.5.0",
+     version: "0.5.1",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -26,7 +26,7 @@ defmodule SparkPost.Mixfile do
   defp deps do
     [
       {:httpoison, "~> 0.9"},
-      {:poison, "~> 3.0"},
+      {:poison, "~> 2.0 or ~> 3.0"},
       {:mock, "~> 0.2.0", only: :test},
       {:excoveralls, "~> 0.5.7", only: :test},
       {:credo, "~> 0.5.1", only: [:dev, :test]},

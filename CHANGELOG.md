@@ -1,5 +1,9 @@
 ## Change Log
 
+## v0.5.1 (2017/05/22)
+- Poison dependency further relaxed to ~> 2.0 or ~> 3.0 to allow for Phoenix
+- Removed unnecessary ibrowse mention from README
+
 ## v0.5.0 (2017/04/13)
 - This release brought to you by the tireless @asgoel
 - Core suppression list support
