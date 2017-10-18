@@ -123,6 +123,7 @@ defmodule SparkPost.Transmission do
       recipients: Recipient.to_recipient_list(body.recipients),
       content: Content.to_content(body.content)
     }
+    IO.inspect body
     response = Endpoint.request(:post, "transmissions", body)
     Endpoint.marshal_response(response, Transmission.Response)
   end
