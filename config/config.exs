@@ -4,7 +4,7 @@ use Mix.Config
 
 config :sparkpost,
   api_endpoint: "https://api.sparkpost.com/api/v1/",
-  api_key: "YOUR API KEY HERE",
+  api_key: "--",
   http_timeout: 5000,
   http_conn_timeout: 8000
 

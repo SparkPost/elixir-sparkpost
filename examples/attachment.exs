@@ -4,7 +4,7 @@ filename = "test/data/sparky.png"
 
 SparkPost.Transmission.send(
   %SparkPost.Transmission{
-    recipients: [to],
+    recipients: [ to ],
     content: %SparkPost.Content.Inline{
       from: from,
       subject: "Now with attachments!",

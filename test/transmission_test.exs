@@ -26,9 +26,14 @@ defmodule SparkPost.TransmissionTest do
       %Recipient{ address: %Address{ name: name, email: email} }
     end
 
+    def addr_spec_recipient( %Recipient{ address: %Address{ email: email, header_to: header_to } }) do
+      %Recipient{ address: %Address{ email: email, header_to: header_to } }
+    end
+
     def addr_spec_recipient(email\\"you@there.com") do
       %Recipient{ address: %Address{ email: email } }
     end
+   
 
     def inline_content do
       %Content.Inline{
@@ -83,6 +88,14 @@ defmodule SparkPost.TransmissionTest do
 
     defp parse_recipient(%{address: addr} = recip) do
       %{recip | address: parse_address(addr)}
+    end
+
+    defp parse_address(%{name: name, email: email, header_to: header_to}) do
+      %Address{name: name, email: email, header_to: header_to}
+    end
+
+    defp parse_address(%{email: email, header_to: header_to}) do
+      %Address{email: email, header_to: header_to}
     end
 
     defp parse_address(%{name: name, email: email}) do
@@ -158,6 +171,23 @@ defmodule SparkPost.TransmissionTest do
   test "Transmission.send accepts a list of short-form recipient email addresses" do
     # RFC2822 3.4.1: Addr-spec specification
     recipients = ["you@there.com", "youtoo@theretoo.com"]
+    expected = Enum.map recipients, fn recip ->
+      TestStructs.addr_spec_recipient(recip)
+    end
+    TestRequests.test_send(
+      %{TestStructs.basic_transmission | recipients: recipients},
+      &(assert &1.recipients == expected)
+    )
+  end
+
+  test "Transmission.send accepts a 2 recipents with CC as SparkPost.Address structs" do
+    # RFC2822 3.4.1: Addr-spec specification
+    email0 = "to@thisperson.com"
+    email1 = "bcc@thatperson.com"
+    recip0 = %SparkPost.Recipient{ address: %SparkPost.Address{ email: email0 } }
+    recip1 = %SparkPost.Recipient{ address: %SparkPost.Address{ email: email1, header_to: email0 } }
+
+    recipients = [ recip0, recip1]
     expected = Enum.map recipients, fn recip ->
       TestStructs.addr_spec_recipient(recip)
     end
