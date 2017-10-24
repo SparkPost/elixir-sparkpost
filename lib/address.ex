@@ -9,7 +9,7 @@ defmodule SparkPost.Address do
    - `%SparkPost.Recipient.address{from: ...}`
   """
 
-  defstruct name: nil, email: :required
+  defstruct name: nil, email: :required, header_to: nil
 
   @doc """
   Convenience conversions to `%SparkPost.Address{}` from:
@@ -22,6 +22,13 @@ defmodule SparkPost.Address do
 
   def to_address(%{name: name, email: email})do
     %__MODULE__{name: name, email: email}
+  end
+
+  def to_address(%{name: name, email: email, header_to: header_to})do
+    %__MODULE__{name: name, email: email,  header_to: header_to}
+  end
+  def to_address(%{ email: email, header_to: header_to})do
+    %__MODULE__{email: email,  header_to: header_to}
   end
 
   def to_address(%{email: email})do
