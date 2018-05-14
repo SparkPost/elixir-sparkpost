@@ -3,7 +3,7 @@ defmodule SparkPost.Mixfile do
 
   def project do
     [app: :sparkpost,
-     version: "0.5.1",
+     version: "0.5.2",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -38,7 +38,7 @@ defmodule SparkPost.Mixfile do
   defp package do
     [
       files: ["mix.exs", "lib", "README.md", "CONTRIBUTING.md", "LICENSE.md"],
-      maintainers: ["Ewan Dennis", "Rich Leland"],
+      maintainers: ["Ewan Dennis"],
       licenses: ["Apache 2.0"],
       links: %{
         "Github" => "https://github.com/SparkPost/elixir-sparkpost",

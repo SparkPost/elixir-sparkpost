@@ -1,5 +1,8 @@
 ## Change Log
 
+## v0.5.2 (2018-05-14)
+- Bumped httpoison dep to ~1.0 (thanks @jasongoodwin)
+
 ## v0.5.1 (2017/05/22)
 - Poison dependency further relaxed to ~> 2.0 or ~> 3.0 to allow for Phoenix
 - Removed unnecessary ibrowse mention from README
