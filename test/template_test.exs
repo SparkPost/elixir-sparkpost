@@ -139,4 +139,46 @@ defmodule SparkPost.TemplateTest do
       resp = Template.update(TestStruct.basic_template())
       assert %Endpoint.Error{} = resp
   end
+
+  test_with_mock "Template.delete succeeds with empty body",
+    HTTPoison, [request: fn (method, url, body, headers, opts) ->
+      assert method == :delete
+      assert url =~ "/templates/TEMPLATE_ID"
+      fun = MockServer.mk_http_resp(200, "{}")
+      fun.(method, url, body, headers, opts)
+    end] do
+      assert Template.delete("TEMPLATE_ID") == {:ok, %SparkPost.Endpoint.Response{results: %{}, status_code: 200}}
+  end
+
+  test_with_mock "Template.delete fails with 404",
+    HTTPoison, [request: fn (method, url, body, headers, opts) ->
+      assert method == :delete
+      assert url =~ "/templates/TEMPLATE_ID"
+      fun = MockServer.mk_http_resp(404, MockServer.get_json("templatedelete_fail_404"))
+      fun.(method, url, body, headers, opts)
+    end] do
+      assert {:error, %Endpoint.Error{} = resp} = Template.delete("TEMPLATE_ID")
+      assert resp.status_code == 404
+      assert resp.errors == [%{
+        code: "1600",
+        description: "Template does not exist",
+        message: "resource not found"
+      }]
+  end
+
+  test_with_mock "Template.delete fails with 409",
+    HTTPoison, [request: fn (method, url, body, headers, opts) ->
+      assert method == :delete
+      assert url =~ "/templates/TEMPLATE_ID"
+      fun = MockServer.mk_http_resp(409, MockServer.get_json("templatedelete_fail_409"))
+      fun.(method, url, body, headers, opts)
+    end] do
+      assert {:error, %Endpoint.Error{} = resp} = Template.delete("TEMPLATE_ID")
+      assert resp.status_code == 409
+      assert resp.errors == [%{
+        code: "1602",
+        description: "Template is in use by msg generation",
+        message: "resource conflict"
+      }]
+  end
 end

@@ -113,4 +113,23 @@ defmodule SparkPost.Template do
     |> Endpoint.request("templates/#{template_id}#{qs}", template)
     |> Endpoint.marshal_response(SparkPost.Template.Response)
   end
+
+  @doc """
+  Delete a SparkPost Template
+
+  ## Parameters
+
+  - a valid template id
+
+  ## Response
+
+  - `{:ok, %SparkPost.Endpoint.Response{}}` if successful
+  - `{:error, %SparkPost.Endpoint.Error{}}` if failure
+  """
+  def delete(template_id) do
+    case Endpoint.request(:delete, "templates/#{template_id}") do
+      %SparkPost.Endpoint.Response{status_code: 200} = response -> {:ok, response}
+      other -> {:error, other}
+    end
+  end
 end
