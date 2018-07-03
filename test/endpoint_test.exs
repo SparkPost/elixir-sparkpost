@@ -27,7 +27,7 @@ defmodule SparkPost.EndpointTest do
   end
 
   test "Endpoint.request succeeds with Endpoint.Response" do
-    with_mock HTTPoison, [request: fn(_, _, _, _, _) -> 
+    with_mock HTTPoison, [request: fn(_, _, _, _, _) ->
      r = MockServer.mk_resp
      r.(nil, nil, nil, nil, nil)
     end] do
@@ -110,6 +110,16 @@ defmodule SparkPost.EndpointTest do
     end
     ] do
       assert %Endpoint.Error{errors: [:timeout], status_code: nil, results: nil} ==
+        Endpoint.request(:post, "transmissions", %{}, %{}, [])
+  end
+
+  test_with_mock "Endpoint request can handle blank map as response", HTTPoison,
+    [request: fn (method, url, body, headers, opts) ->
+      fun = MockServer.mk_http_resp(200, "{}")
+      fun.(method, url, body, headers, opts)
+    end]
+    do
+      assert %Endpoint.Response{status_code: 200, results: %{}} ==
         Endpoint.request(:post, "transmissions", %{}, %{}, [])
   end
 end
