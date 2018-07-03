@@ -101,7 +101,7 @@ defmodule SparkPost.Template do
   Setting `published: true` on the struct itself performs the act of publishing a draft template. If the field is set to
   `true`, the `:update_published` option is ingored completely.
   """
-  def update(%__MODULE{id: template_id, published: published} = template, options \\ [update_published: false]) do
+  def update(%__MODULE__{id: template_id, published: published} = template, options \\ [update_published: false]) do
     qs =
       if published != true && Keyword.get(options, :update_published, false) == true do
         "?update_published=true"
