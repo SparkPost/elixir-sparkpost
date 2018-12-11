@@ -1,0 +1,9 @@
+{
+  "errors": [
+    {
+      "message": "resource not found",
+      "code": "1600",
+      "description": "Template does not exist"
+    }
+  ]
+}

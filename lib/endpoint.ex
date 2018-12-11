@@ -15,7 +15,7 @@ defmodule SparkPost.Endpoint do
       - `:get`
       - `:head`
       - `:options`
-      - `:patch` 
+      - `:patch`
       - `:post`
       - `:put`
     - `endpoint`: SparkPost API endpoint as string ("transmissions", "templates", ...)
@@ -72,7 +72,7 @@ defmodule SparkPost.Endpoint do
 
   defp handle_response({:ok, %HTTPoison.Response{status_code: code, body: body}}, decode_results) when code >= 200 and code < 300 do
     decoded_body = decode_response_body(body)
-    if decode_results do
+    if decode_results && Map.has_key?(decoded_body, :results) do
       %SparkPost.Endpoint.Response{status_code: code, results: decoded_body.results}
     else
       %SparkPost.Endpoint.Response{status_code: code, results: decoded_body}
@@ -98,7 +98,7 @@ defmodule SparkPost.Endpoint do
     }
   end
 
-  # Do not try to remove nils from an empty map 
+  # Do not try to remove nils from an empty map
   defp encode_request_body(body) when is_map(body) and map_size(body) == 0, do: {:ok, ""}
   defp encode_request_body(body) do
     body |> Washup.filter |> Poison.encode
