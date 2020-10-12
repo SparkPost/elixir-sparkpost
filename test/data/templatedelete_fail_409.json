@@ -1,0 +1,9 @@
+{
+  "errors": [
+    {
+      "message": "resource conflict",
+      "code": "1602",
+      "description": "Template is in use by msg generation"
+    }
+  ]
+}
