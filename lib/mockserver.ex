@@ -1,19 +1,19 @@
 defmodule SparkPost.MockServer do
   @moduledoc false
 
-  def create_json(endpoint\\"transmission") do
+  def create_json(endpoint \\ "transmission") do
     File.read!("test/data/create#{endpoint}.json")
   end
 
-  def create_fail_json(endpoint\\"transmission") do
+  def create_fail_json(endpoint \\ "transmission") do
     File.read!("test/data/create#{endpoint}fail.json")
   end
 
-  def list_json(endpoint\\"transmission") do
+  def list_json(endpoint \\ "transmission") do
     File.read!("test/data/list#{endpoint}.json")
   end
 
-  def get_json(endpoint\\"transmission") do
+  def get_json(endpoint \\ "transmission") do
     File.read!("test/data/#{endpoint}.json")
   end
 
@@ -34,10 +34,12 @@ defmodule SparkPost.MockServer do
   end
 
   def mk_http_resp(status_code, body) do
-    fn (_method, _url, _body, _headers, _opts) -> {:ok, %HTTPoison.Response{status_code: status_code, body: body}} end
+    fn _method, _url, _body, _headers, _opts ->
+      {:ok, %HTTPoison.Response{status_code: status_code, body: body}}
+    end
   end
 
   def mk_error(reason) do
-    fn (_method, _url, _body, _headers, _opts) -> {:error, %HTTPoison.Error{reason: reason}} end
+    fn _method, _url, _body, _headers, _opts -> {:error, %HTTPoison.Error{reason: reason}} end
   end
 end

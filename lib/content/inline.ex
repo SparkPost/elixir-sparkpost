@@ -18,18 +18,19 @@ defmodule SparkPost.Content.Inline do
   """
 
   defstruct from: :required,
-    reply_to: nil,
-    headers: nil,
-    subject: :required,
-    text: nil,
-    html: nil,
-    attachments: nil,
-    inline_images: nil
+            reply_to: nil,
+            headers: nil,
+            subject: :required,
+            text: nil,
+            html: nil,
+            attachments: nil,
+            inline_images: nil
 
   @doc """
   Convert a raw "from" field into a %SparkPost.Address{} object.
   """
   def convert_from_field(%SparkPost.Endpoint.Error{} = content), do: content
+
   def convert_from_field(%__MODULE__{} = content) do
     %{content | from: SparkPost.Address.to_address(content.from)}
   end

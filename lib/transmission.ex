@@ -42,24 +42,30 @@ defmodule SparkPost.Transmission do
   """
 
   defstruct options: %SparkPost.Transmission.Options{},
-    campaign_id: nil,
-    return_path: nil,
-    metadata: nil,
-    substitution_data: nil,
-    recipients: :required,
-    content: :required,
-    id: nil,     # System generated fields from this point on
-    description: nil,
-    state: nil,
-    rcpt_list_chunk_size: nil,
-    rcp_list_total_chunks: nil,
-    num_rcpts: nil,
-    num_generated: nil,
-    num_failed_gen: nil,
-    generation_start_time: nil,
-    generation_end_time: nil
+            campaign_id: nil,
+            return_path: nil,
+            metadata: nil,
+            substitution_data: nil,
+            recipients: :required,
+            content: :required,
+            # System generated fields from this point on
+            id: nil,
+            description: nil,
+            state: nil,
+            rcpt_list_chunk_size: nil,
+            rcp_list_total_chunks: nil,
+            num_rcpts: nil,
+            num_generated: nil,
+            num_failed_gen: nil,
+            generation_start_time: nil,
+            generation_end_time: nil
 
-  alias SparkPost.{Transmission, Recipient, Endpoint, Content}
+  alias SparkPost.{
+    Content,
+    Endpoint,
+    Recipient,
+    Transmission
+  }
 
   @doc """
   Create a new transmission and send some email.
@@ -81,7 +87,7 @@ defmodule SparkPost.Transmission do
       Transmission.send(%Transmission{
         recipients: ["to@you.com"],
         content: %Content.Inline{
-          from: "from@me.com", 
+          from: "from@me.com",
           subject: subject,
           text: text,
           html: html
@@ -119,10 +125,12 @@ defmodule SparkPost.Transmission do
         total_accepted_recipients: 1, total_rejected_recipients: 0}
   """
   def send(%__MODULE__{} = body) do
-    body = %{body |
-      recipients: Recipient.to_recipient_list(body.recipients),
-      content: Content.to_content(body.content)
+    body = %{
+      body
+      | recipients: Recipient.to_recipient_list(body.recipients),
+        content: Content.to_content(body.content)
     }
+
     response = Endpoint.request(:post, "transmissions", body)
     Endpoint.marshal_response(response, Transmission.Response)
   end
@@ -175,12 +183,15 @@ defmodule SparkPost.Transmission do
         rcp_list_total_chunks: nil, rcpt_list_chunk_size: nil, recipients: :required,
         return_path: :nil, state: "Success", substitution_data: nil}]
   """
-  def list(filters\\[]) do
-    response = Endpoint.request(:get, "transmissions", %{}, %{}, [params: filters])
+  def list(filters \\ []) do
+    response = Endpoint.request(:get, "transmissions", %{}, %{}, params: filters)
+
     case response do
       %Endpoint.Response{} ->
-        Enum.map(response.results, fn (trans) -> struct(__MODULE__, trans) end)
-      _ -> response
+        Enum.map(response.results, fn trans -> struct(__MODULE__, trans) end)
+
+      _ ->
+        response
     end
   end
 end

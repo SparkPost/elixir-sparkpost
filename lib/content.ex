@@ -64,12 +64,10 @@ defmodule SparkPost.Content do
   end
 
   def to_content(%SparkPost.Content.Inline{} = content) do
-    %{ content |
-      from: SparkPost.Address.to_address(content.from)}
+    %{content | from: SparkPost.Address.to_address(content.from)}
   end
 
   def to_content(content) when is_map(content) do
-    %{ struct(SparkPost.Content.Inline, content) |
-      from: SparkPost.Address.to_address(content.from)}
+    %{struct(SparkPost.Content.Inline, content) | from: SparkPost.Address.to_address(content.from)}
   end
 end

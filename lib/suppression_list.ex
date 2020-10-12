@@ -32,16 +32,21 @@ defmodule SparkPost.SuppressionList do
     - description (optional): optional description of this entry in the suppression list
   """
   def upsert_one(recipient, type, description \\ nil) do
-    body = if description == nil do
-      %{type: type}
-    else
-      %{type: type, description: description}
-    end
+    body =
+      if description == nil do
+        %{type: type}
+      else
+        %{type: type, description: description}
+      end
+
     response = Endpoint.request(:put, "suppression-list/#{recipient}", body)
+
     case response do
       %SparkPost.Endpoint.Response{status_code: 200, results: results} ->
         {:ok, Map.get(results, :message, "")}
-      _ -> {:error, response}
+
+      _ ->
+        {:error, response}
     end
   end
 
@@ -56,10 +61,13 @@ defmodule SparkPost.SuppressionList do
   """
   def delete(recipient) do
     response = Endpoint.request(:delete, "suppression-list/#{recipient}", %{}, %{}, [], false)
+
     case response do
       %SparkPost.Endpoint.Response{status_code: 204} ->
         {:ok, ""}
-      _ -> {:error, response}
+
+      _ ->
+        {:error, response}
     end
   end
 
@@ -81,15 +89,20 @@ defmodule SparkPost.SuppressionList do
   """
   def search(params \\ []) do
     response = Endpoint.request(:get, "suppression-list", %{}, %{}, [params: params], false)
+
     case response do
       %SparkPost.Endpoint.Response{results: body} ->
-        mapped_results = Enum.map(body.results, fn res -> struct(SparkPost.SuppressionList.ListEntry, res) end)
+        mapped_results =
+          Enum.map(body.results, fn res -> struct(SparkPost.SuppressionList.ListEntry, res) end)
+
         %SparkPost.SuppressionList.SearchResult{
           results: mapped_results,
           links: body.links,
           total_count: body.total_count
         }
-      _ -> response
+
+      _ ->
+        response
     end
   end
 end
