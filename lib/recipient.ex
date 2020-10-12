@@ -12,12 +12,12 @@ defmodule SparkPost.Recipient do
   """
 
   defstruct address: :required,
-    return_path: nil,
-    tags: nil,
-    metadata: nil,
-    substitution_data: nil
+            return_path: nil,
+            tags: nil,
+            metadata: nil,
+            substitution_data: nil
 
-  alias SparkPost.{Recipient, Address}
+  alias SparkPost.{Address, Recipient}
 
   @doc """
   Convenience conversions to `[ %SparkPost.Recipient{} ]` from:
@@ -29,12 +29,11 @@ defmodule SparkPost.Recipient do
   end
 
   def to_recipient_list(email_list) when is_list(email_list) do
-    Enum.map(email_list, fn (recip) -> to_recipient(recip)
-    end)
+    Enum.map(email_list, fn recip -> to_recipient(recip) end)
   end
 
   def to_recipient_list(email) when is_binary(email) do
-    [ to_recipient(email) ]
+    [to_recipient(email)]
   end
 
   @doc """
@@ -58,15 +57,16 @@ defmodule SparkPost.Recipient do
 
   def to_recipient(%{address: address} = struc) do
     struct(__MODULE__, %{
-      struc | address: Address.to_address(address)
+      struc
+      | address: Address.to_address(address)
     })
   end
 
   def to_recipient(%{name: _name, email: _email} = struc) do
-    %__MODULE__{ address: Address.to_address(struc) }
+    %__MODULE__{address: Address.to_address(struc)}
   end
 
   def to_recipient(%{email: _} = struc) do
-    %__MODULE__{ address: Address.to_address(struc) }
+    %__MODULE__{address: Address.to_address(struc)}
   end
 end

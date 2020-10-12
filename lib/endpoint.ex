@@ -15,7 +15,7 @@ defmodule SparkPost.Endpoint do
       - `:get`
       - `:head`
       - `:options`
-      - `:patch` 
+      - `:patch`
       - `:post`
       - `:put`
     - `endpoint`: SparkPost API endpoint as string ("transmissions", "templates", ...)
@@ -32,27 +32,29 @@ defmodule SparkPost.Endpoint do
           "id" => "102258558346809186", "name" => "102258558346809186",
           "state" => "Success"}, ...], status_code: 200}
   """
-  def request(method, endpoint, body \\ %{},  headers \\ %{}, options \\ [], decode_results \\ true) do
+  def request(method, endpoint, body \\ %{}, headers \\ %{}, options \\ [], decode_results \\ true) do
     url = Application.get_env(:sparkpost, :api_endpoint, @default_endpoint) <> endpoint
 
     {:ok, request_body} = encode_request_body(body)
 
-    request_headers = if method in [:get, :delete] do
+    request_headers =
+      if method in [:get, :delete] do
         headers
       else
         Map.merge(headers, %{"Content-Type": "application/json"})
       end
       |> Map.merge(base_request_headers())
 
-    request_options = options
-    |> Keyword.put(:timeout, Application.get_env(:sparkpost, :http_timeout, 30000))
-    |> Keyword.put(:recv_timeout, Application.get_env(:sparkpost, :http_recv_timeout, 8000))
+    request_options =
+      options
+      |> Keyword.put(:timeout, Application.get_env(:sparkpost, :http_timeout, 30_000))
+      |> Keyword.put(:recv_timeout, Application.get_env(:sparkpost, :http_recv_timeout, 8000))
 
     HTTPoison.request(method, url, request_body, request_headers, request_options)
     |> handle_response(decode_results)
   end
 
-  def marshal_response(response, struct_type, subkey\\nil)
+  def marshal_response(response, struct_type, subkey \\ nil)
 
   @doc """
   Extract a meaningful structure from a generic endpoint response:
@@ -70,17 +72,21 @@ defmodule SparkPost.Endpoint do
     response
   end
 
-  defp handle_response({:ok, %HTTPoison.Response{status_code: code, body: body}}, decode_results) when code >= 200 and code < 300 do
+  defp handle_response({:ok, %HTTPoison.Response{status_code: code, body: body}}, decode_results)
+       when code >= 200 and code < 300 do
     decoded_body = decode_response_body(body)
-    if decode_results do
+
+    if decode_results && Map.has_key?(decoded_body, :results) do
       %SparkPost.Endpoint.Response{status_code: code, results: decoded_body.results}
     else
       %SparkPost.Endpoint.Response{status_code: code, results: decoded_body}
     end
   end
 
-  defp handle_response({:ok, %HTTPoison.Response{status_code: code, body: body}}, _decode_results) when code >= 400 do
+  defp handle_response({:ok, %HTTPoison.Response{status_code: code, body: body}}, _decode_results)
+       when code >= 400 do
     decoded_body = decode_response_body(body)
+
     if Map.has_key?(decoded_body, :errors) do
       %SparkPost.Endpoint.Error{status_code: code, errors: decoded_body.errors}
     end
@@ -90,24 +96,25 @@ defmodule SparkPost.Endpoint do
     %SparkPost.Endpoint.Error{status_code: nil, errors: [reason]}
   end
 
-  defp base_request_headers() do
+  defp base_request_headers do
     {:ok, version} = :application.get_key(:sparkpost, :vsn)
+
     %{
       "User-Agent": "elixir-sparkpost/" <> to_string(version),
-      "Authorization": Application.get_env(:sparkpost, :api_key)
+      Authorization: Application.get_env(:sparkpost, :api_key)
     }
   end
 
-  # Do not try to remove nils from an empty map 
+  # Do not try to remove nils from an empty map
   defp encode_request_body(body) when is_map(body) and map_size(body) == 0, do: {:ok, ""}
+
   defp encode_request_body(body) do
-    body |> Washup.filter |> Poison.encode
+    body |> Washup.filter() |> Poison.encode()
   end
 
   defp decode_response_body(body) when byte_size(body) == 0, do: ""
+
   defp decode_response_body(body) do
-    # TODO: [key: :atoms] is unsafe for open-ended structures such as
-    # metadata and substitution_data
-    body |> Poison.decode!([keys: :atoms])
+    body |> Poison.decode!(keys: :atoms)
   end
 end

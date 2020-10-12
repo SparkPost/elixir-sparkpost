@@ -16,11 +16,11 @@ defmodule SparkPost.Transmission.Options do
   """
 
   defstruct start_time: nil,
-    open_tracking: true,
-    click_tracking: true,
-    transactional: nil,
-    sandbox: nil,
-    skip_suppression: nil,
-    ip_pool: nil,
-    inline_css: nil
+            open_tracking: true,
+            click_tracking: true,
+            transactional: nil,
+            sandbox: nil,
+            skip_suppression: nil,
+            ip_pool: nil,
+            inline_css: nil
 end

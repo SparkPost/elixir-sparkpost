@@ -10,6 +10,6 @@ defmodule SparkPost.Transmission.Response do
   """
 
   defstruct id: nil,
-    total_accepted_recipients: nil,
-    total_rejected_recipients: nil
+            total_accepted_recipients: nil,
+            total_rejected_recipients: nil
 end
