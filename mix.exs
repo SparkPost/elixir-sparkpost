@@ -2,21 +2,29 @@ defmodule SparkPost.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :sparkpost,
-     version: "0.5.2",
-     elixir: "~> 1.2",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     source_url: "https://github.com/SparkPost/elixir-sparkpost",
-     description: "The official Elixir package for the SparkPost API",
-     package: package(),
-     deps: deps(),
-     docs: [
-       extras: ["README.md", "CONTRIBUTING.md", "CHANGELOG.md"]
-     ],
-     test_coverage: [tool: ExCoveralls],
-     preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test]
-   ]
+    [
+      app: :sparkpost,
+      build_embedded: Mix.env() == :prod,
+      deps: deps(),
+      description: "The official Elixir package for the SparkPost API",
+      dialyzer: dialyzer(),
+      docs: [extras: ["README.md", "CONTRIBUTING.md", "CHANGELOG.md"]],
+      elixir: "~> 1.10",
+      package: package(),
+      preferred_cli_env: [coveralls: :test, "coveralls.detail": :test, "coveralls.post": :test],
+      source_url: "https://github.com/SparkPost/elixir-sparkpost",
+      start_permanent: Mix.env() == :prod,
+      test_coverage: [tool: ExCoveralls],
+      version: "0.5.2"
+    ]
+  end
+
+  defp dialyzer do
+    [
+      plt_add_apps: [:mix, :ex_unit, :poison],
+      plt_core_path: "plts",
+      plt_file: {:no_warn, "plts/dialyzer.plt"}
+    ]
   end
 
   def application do
@@ -25,13 +33,14 @@ defmodule SparkPost.Mixfile do
 
   defp deps do
     [
-      {:httpoison, "~> 1.0"},
-      {:poison, "~> 2.0 or ~> 3.0"},
-      {:mock, "~> 0.2.0", only: :test},
-      {:excoveralls, "~> 0.5.7", only: :test},
-      {:credo, "~> 0.5.1", only: [:dev, :test]},
-      {:earmark, "~> 1.0.3", only: :dev},
-      {:ex_doc, "~> 0.14.3", only: :dev}
+      {:dialyxir, "~> 1.0.0-rc.6", only: [:dev, :test], runtime: false},
+      {:httpoison, "~> 1.7"},
+      {:poison, "~> 4.0"},
+      {:mock, "~> 0.3.5", only: :test},
+      {:excoveralls, "~> 0.13", only: :test},
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:earmark, "~> 1.4", only: :dev},
+      {:ex_doc, "~> 0.20", only: :dev, runtime: false}
     ]
   end
 
@@ -47,4 +56,3 @@ defmodule SparkPost.Mixfile do
     ]
   end
 end
-

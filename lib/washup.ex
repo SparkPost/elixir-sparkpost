@@ -16,7 +16,7 @@ defmodule Washup do
   def filter(it) do
     cond do
       is_map(it) and Map.has_key?(it, :__struct__) -> filter(Map.from_struct(it))
-      is_map(it) -> for {k,v} <- it, not is_nil(v), into: %{}, do: {k, do_filter(v)}
+      is_map(it) -> for {k, v} <- it, not is_nil(v), into: %{}, do: {k, do_filter(v)}
       is_list(it) -> for x <- it, not is_nil(x), do: do_filter(x)
       true -> it
     end
@@ -39,21 +39,24 @@ defmodule Washup do
       iex> Washup.verify(jenny)
       ** (Washup.RequiredError) pets->listidx->species required
   """
-  def verify(it, path\\[]) do
+  def verify(it, path \\ []) do
     cond do
       is_map(it) and Map.has_key?(it, :__struct__) -> verify(Map.from_struct(it), path)
-      is_map(it) -> for {k,v} <- it, into: %{}, do: {k, verify(v, [k|path])}
-      is_list(it) -> for x <- it, do: verify(x, ["listidx"|path])
+      is_map(it) -> for {k, v} <- it, into: %{}, do: {k, verify(v, [k | path])}
+      is_list(it) -> for x <- it, do: verify(x, ["listidx" | path])
       true -> verify_val(it, path)
     end
   end
 
   defp verify_val(val, path) do
     case val do
-      :required -> raise Washup.RequiredError,
-        path: path,
-        message: Enum.join(Enum.reverse(path), "->") <> " required"
-      _ -> val
+      :required ->
+        raise Washup.RequiredError,
+          path: path,
+          message: Enum.join(Enum.reverse(path), "->") <> " required"
+
+      _ ->
+        val
     end
   end
 end

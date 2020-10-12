@@ -19,17 +19,17 @@ defmodule SparkPost.Template do
    - has_published: Read-only. Indicates if template has a published version.
   """
 
+  alias SparkPost.{Content, Endpoint, Transmission}
+
   defstruct id: nil,
             name: nil,
-            content: %SparkPost.Content.Inline{},
+            content: %Content.Inline{},
             published: false,
             description: nil,
-            options: %SparkPost.Transmission.Options{},
+            options: %Transmission.Options{},
             shared_with_subaccounts: false,
             has_draft: nil,
             has_published: nil
-
-  alias SparkPost.Endpoint
 
   @doc """
   Generate a preview of an existing template.
@@ -67,7 +67,7 @@ defmodule SparkPost.Template do
     :post
     |> Endpoint.request("templates/#{template.template_id}/preview#{qs}", body)
     |> Endpoint.marshal_response(SparkPost.Content.Inline)
-    |> SparkPost.Content.Inline.convert_from_field()
+    |> Content.Inline.convert_from_field()
   end
 
   @doc """
@@ -101,7 +101,10 @@ defmodule SparkPost.Template do
   Setting `published: true` on the struct itself performs the act of publishing a draft template. If the field is set to
   `true`, the `:update_published` option is ingored completely.
   """
-  def update(%__MODULE__{id: template_id, published: published} = template, options \\ [update_published: false]) do
+  def update(
+        %__MODULE__{id: template_id, published: published} = template,
+        options \\ [update_published: false]
+      ) do
     qs =
       if published != true && Keyword.get(options, :update_published, false) == true do
         "?update_published=true"

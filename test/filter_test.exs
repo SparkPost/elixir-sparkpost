@@ -23,6 +23,6 @@ defmodule Washup.Test.Filter do
 
   test "map -> map" do
     assert Washup.filter(%{key1: %{a: 1, b: nil, c: 3}, key2: nil, key3: %{q: "q"}}) ==
-      %{key1: %{a: 1, c: 3}, key3: %{q: "q"}}
+             %{key1: %{a: 1, c: 3}, key3: %{q: "q"}}
   end
 end

@@ -17,24 +17,27 @@ defmodule SparkPost.Address do
     - `%{name: ..., email: ...}`
   """
   def to_address(email) when is_binary(email) do
-    parse_address(email)  
+    parse_address(email)
   end
 
-  def to_address(%{name: name, email: email})do
+  def to_address(%{name: name, email: email}) do
     %__MODULE__{name: name, email: email}
   end
 
-  def to_address(%{email: email})do
+  def to_address(%{email: email}) do
     %__MODULE__{email: email}
   end
 
   defp parse_address(addr) when is_binary(addr) do
     case Regex.run(~r/\s*(.+)\s+<(.+@.+)>\s*$/, addr) do
-      [_, name, email] -> %__MODULE__{ name: name, email: email }
-      nil -> case Regex.run(~r/\s*(.+@.+)\s*$/, addr) do
-        [_, email] -> %__MODULE__{ email: email }
-        nil -> raise __MODULE__.FormatError, message: "Invalid email address: #{addr}"
-      end
+      [_, name, email] ->
+        %__MODULE__{name: name, email: email}
+
+      nil ->
+        case Regex.run(~r/\s*(.+@.+)\s*$/, addr) do
+          [_, email] -> %__MODULE__{email: email}
+          nil -> raise __MODULE__.FormatError, message: "Invalid email address: #{addr}"
+        end
     end
   end
 end
