@@ -1,4 +1,5 @@
 defmodule SparkPost.Mixfile do
+  @moduledoc false
   use Mix.Project
 
   def project do
@@ -15,7 +16,7 @@ defmodule SparkPost.Mixfile do
       source_url: "https://github.com/SparkPost/elixir-sparkpost",
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
-      version: "0.5.2"
+      version: "0.6.0"
     ]
   end
 
@@ -47,7 +48,7 @@ defmodule SparkPost.Mixfile do
   defp package do
     [
       files: ["mix.exs", "lib", "README.md", "CONTRIBUTING.md", "LICENSE.md"],
-      maintainers: ["Ewan Dennis"],
+      maintainers: ["Ewan Dennis", "Nikola Begedin"],
       licenses: ["Apache 2.0"],
       links: %{
         "Github" => "https://github.com/SparkPost/elixir-sparkpost",
