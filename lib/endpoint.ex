@@ -60,12 +60,12 @@ defmodule SparkPost.Endpoint do
   Extract a meaningful structure from a generic endpoint response:
   response.results[subkey] as struct_type
   """
+  def marshal_response(%SparkPost.Endpoint.Response{} = response, struct_type, nil) do
+    struct(struct_type, response.results)
+  end
+
   def marshal_response(%SparkPost.Endpoint.Response{} = response, struct_type, subkey) do
-    if subkey do
-      struct(struct_type, response.results[subkey])
-    else
-      struct(struct_type, response.results)
-    end
+    struct(struct_type, response.results[subkey])
   end
 
   def marshal_response(%SparkPost.Endpoint.Error{} = response, _struct_type, _subkey) do
