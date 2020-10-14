@@ -1,5 +1,22 @@
 ## Change Log
 
+## v0.6 (2020-10-14) [unreleased]
+
+- [INTERNAL] Add Github Actions Workflow for CI
+- [INTERNAL] Add elixir formatter
+- [INTERNAL] Add credo
+- [INTERNAL] Add dialyzer
+- Update mix elixir version 1.2 -> 1.10.4
+- Update htttpoison 1.0 -> 1.7
+- Update poison 2.0 or 3.0 -> 4.0
+- Update mock 0.2 -> 0.3.5
+- Update excoveralls 0.5.7 -> 0.13
+- Update earmark 1.0.3 -> 1.4
+- Update ex_doc 0.14.3 -> 0.20
+- [FEATURE] Add `SparkPost.Template.create/1`
+- [FEATURE] Add `SparkPost.Template.update/2`
+- [FEATURE] Add `SparkPost.Template.delete/1`
+
 ## v0.5.2 (2018-05-14)
 - Bumped httpoison dep to ~1.0 (thanks @jasongoodwin)
 
