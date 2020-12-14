@@ -1,7 +1,8 @@
 ## Change Log
 
-## v0.6 (2020-10-14) [unreleased]
+## v0.6 (2020-12-14) [unreleased]
 
+- [FEATURE] Add `SparkPost.Event.search_message_events/1`
 - [INTERNAL] Add Github Actions Workflow for CI
 - [INTERNAL] Add elixir formatter
 - [INTERNAL] Add credo
