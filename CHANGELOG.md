@@ -4,6 +4,11 @@
 
 - [FEATURE] Add `SparkPost.Template.list/1`
 - Upgrade elixir to 1.14.1
+- Upgrade dialyxir to ~>1.2
+- Upgrade poison to ~>5.0
+- Upgrade excoveralls to ~>0.15
+- Upgrade credo to ~>1.6
+- Upgrade ex_doc to ~>0.29
 
 # Older releases
 ## v0.6 (2020-12-14) [unreleased]
