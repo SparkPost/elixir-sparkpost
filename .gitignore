@@ -5,3 +5,5 @@
 erl_crash.dump
 *.ez
 *.swp
+/plts/*.plt
+/plts/*.plt.hash

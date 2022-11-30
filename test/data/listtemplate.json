@@ -1,0 +1,25 @@
+{
+  "results": [
+    {
+      "id": "summer_sale",
+      "name": "Summer Sale!",
+      "published": false,
+      "description": "",
+      "has_draft": true,
+      "has_published": true,
+      "last_update_time": "2017-08-11T12:12:12+00:00",
+      "shared_with_subaccount": true
+    },
+    {
+      "id": "daily",
+      "name": "daily",
+      "published": false,
+      "description": "Daily roundup email.",
+      "has_draft": true,
+      "has_published": true,
+      "last_use": "2018-05-08T14:49:03+00:00",
+      "last_update_time": "2018-02-10T14:15:16+00:00",
+      "shared_with_subaccount": true
+    }
+  ]
+}

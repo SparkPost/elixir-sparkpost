@@ -10,4 +10,6 @@ defmodule SparkPost.Endpoint.Error do
   """
 
   defstruct status_code: nil, errors: nil, results: nil
+
+  @type t :: %__MODULE__{}
 end

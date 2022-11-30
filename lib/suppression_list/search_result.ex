@@ -10,6 +10,6 @@ defmodule SparkPost.SuppressionList.SearchResult do
   """
 
   defstruct results: :required,
-    links: :required,
-    total_count: :required
+            links: :required,
+            total_count: :required
 end
