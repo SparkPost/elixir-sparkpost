@@ -1,5 +1,11 @@
 ## Change Log
 
+# 0.7 (2022-11-30)
+
+- [FEATURE] Add `SparkPost.Template.list/1`
+- Upgrade elixir to 1.14.1
+
+# Older releases
 ## v0.6 (2020-12-14) [unreleased]
 
 - [FEATURE] Add `SparkPost.Event.search_message_events/1`
@@ -40,7 +46,7 @@
 - Bumped default connection timeout to 30 secs
 
 ## v0.2.1 (2016/11/03)
-- Added support for `start_time`, `ip_pool` and `inline_css` transmission options 
+- Added support for `start_time`, `ip_pool` and `inline_css` transmission options
 - Updated deps to latest versions
 
 ## v0.2.0 (2016/08/25)

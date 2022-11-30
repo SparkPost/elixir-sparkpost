@@ -21,7 +21,7 @@ defmodule SparkPost.EventTest do
                    fun.(method, url, body, headers, opts)
                  end do
     assert %Event.SearchResult{
-             results: [_] = results,
+             results: [_],
              links: %{},
              total_count: 1
            } = Event.search_message_events()

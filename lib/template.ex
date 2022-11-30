@@ -19,7 +19,9 @@ defmodule SparkPost.Template do
    - has_published: Read-only. Indicates if template has a published version.
   """
 
-  alias SparkPost.{Content, Endpoint, Transmission}
+  alias SparkPost.Content
+  alias SparkPost.Endpoint
+  alias SparkPost.Transmission
 
   defstruct id: nil,
             name: nil,
@@ -30,6 +32,31 @@ defmodule SparkPost.Template do
             shared_with_subaccounts: false,
             has_draft: nil,
             has_published: nil
+
+  @type t :: %__MODULE__{}
+
+  @doc """
+  Lists email templates
+
+  https://developers.sparkpost.com/api/templates/#templates-get-list-all-templates
+
+
+  """
+  @spec list(%{
+          optional(:draft) => boolean,
+          optional(:shared_with_subaccounts) => boolean
+        }) :: list(t)
+  def list(%{} = params \\ %{}) do
+    query =
+      params
+      |> Map.take([:draft, :shared_with_subaccounts])
+      |> Enum.reject(fn {_k, v} -> is_nil(v) end)
+      |> Keyword.new()
+
+    :get
+    |> Endpoint.request("templates", %{}, %{}, params: query)
+    |> Endpoint.marshal_response(__MODULE__)
+  end
 
   @doc """
   Generate a preview of an existing template.
