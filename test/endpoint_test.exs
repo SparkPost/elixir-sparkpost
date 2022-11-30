@@ -41,7 +41,7 @@ defmodule SparkPost.EndpointTest do
 
   test "Endpoint.request populates Endpoint.Response" do
     status_code = 200
-    results = Poison.decode!(MockServer.create_json(), keys: :atoms).results
+    results = Poison.decode!(MockServer.create_json(), %{keys: :atoms}).results
 
     with_mock HTTPoison, request: MockServer.mk_resp() do
       resp = %Endpoint.Response{} = Endpoint.request(:get, "transmissions", %{}, %{}, [])
@@ -62,7 +62,7 @@ defmodule SparkPost.EndpointTest do
 
   test "Endpoint.request populates Endpoint.Error" do
     status_code = 400
-    errors = Poison.decode!(MockServer.create_fail_json(), keys: :atoms).errors
+    errors = Poison.decode!(MockServer.create_fail_json(), %{keys: :atoms}).errors
 
     with_mock HTTPoison, request: MockServer.mk_fail() do
       resp =

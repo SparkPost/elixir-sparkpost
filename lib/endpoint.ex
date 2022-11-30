@@ -81,20 +81,24 @@ defmodule SparkPost.Endpoint do
        when code >= 200 and code < 300 do
     decoded_body = decode_response_body(body)
 
-    if decode_results && Map.has_key?(decoded_body, :results) do
-      %SparkPost.Endpoint.Response{status_code: code, results: decoded_body.results}
-    else
-      %SparkPost.Endpoint.Response{status_code: code, results: decoded_body}
-    end
+    results =
+      case {decode_results, decoded_body} do
+        {true, %{results: results}} -> results
+        _ -> decoded_body
+      end
+
+    %SparkPost.Endpoint.Response{status_code: code, results: results}
   end
 
   defp handle_response({:ok, %HTTPoison.Response{status_code: code, body: body}}, _decode_results)
        when code >= 400 do
-    decoded_body = decode_response_body(body)
+    errors =
+      case decode_response_body(body) do
+        %{errors: errors} -> errors
+        _ -> []
+      end
 
-    if Map.has_key?(decoded_body, :errors) do
-      %SparkPost.Endpoint.Error{status_code: code, errors: decoded_body.errors}
-    end
+    %SparkPost.Endpoint.Error{status_code: code, errors: errors}
   end
 
   defp handle_response({:error, %HTTPoison.Error{reason: reason}}, _decode_results) do
@@ -117,9 +121,10 @@ defmodule SparkPost.Endpoint do
     body |> Washup.filter() |> Poison.encode()
   end
 
-  defp decode_response_body(body) when byte_size(body) == 0, do: ""
+  @spec decode_response_body(String.t()) :: map
+  defp decode_response_body(body) when is_binary(body) and byte_size(body) == 0, do: %{}
 
-  defp decode_response_body(body) do
-    body |> Poison.decode!(keys: :atoms)
+  defp decode_response_body(body) when is_binary(body) do
+    Poison.decode!(body, %{keys: :atoms})
   end
 end

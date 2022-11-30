@@ -45,7 +45,7 @@ defmodule SparkPostTest do
 
     with_mock HTTPoison,
       request: fn method, url, body, headers, opts ->
-        inreq = Poison.decode!(body, keys: :atoms)
+        inreq = Poison.decode!(body, %{keys: :atoms})
         assert Recipient.to_recipient_list(inreq.recipients) == Recipient.to_recipient_list(to)
 
         assert Content.to_content(inreq.content) == %Content.Inline{

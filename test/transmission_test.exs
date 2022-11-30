@@ -67,7 +67,7 @@ defmodule SparkPost.TransmissionTest do
 
     defp handle_send(response_test_fn) do
       fn method, url, body, headers, opts ->
-        req = Poison.decode!(body, keys: :atoms)
+        req = Poison.decode!(body, %{keys: :atoms})
 
         fullreq =
           struct(Transmission, %{
